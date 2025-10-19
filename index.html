@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#667eea">
+    <title>Mitchell's Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 10px; color: #333; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .header h1 { color: #667eea; margin-bottom: 5px; font-size: 1.5rem; }
+        .header p { font-size: 0.85rem; color: #666; }
+        .sync-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; margin-top: 10px; font-weight: 600; background: #e74c3c; color: white; }
+        .sync-badge.online { background: #27ae60; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .tab-btn { background: white; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; color: #666; border: none; font-size: 0.95rem; transition: all 0.2s; }
+        .tab-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .tab-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .content { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; }
+        .content.active { display: block; }
+        .content h2 { font-size: 1.3rem; margin-bottom: 15px; color: #667eea; }
+        .section { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #667eea; }
+        .section h3 { color: #667eea; margin-bottom: 10px; font-size: 1.1rem; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th { background: #667eea; color: white; padding: 12px; text-align: left; font-weight: 600; }
+        td { padding: 12px; border-bottom: 1px solid #ddd; }
+        tr:nth-child(even) { background: #f8f9fa; }
+        input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: #667eea; }
+        .btn { background: #667eea; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin: 10px 10px 10px 0; font-size: 0.95rem; }
+        .btn:hover { background: #764ba2; }
+        .btn-danger { background: #e74c3c; }
+        .btn-danger:hover { background: #c0392b; }
+        input[type="text"], textarea, select { padding: 12px; font-size: 1rem; border-radius: 5px; border: 2px solid #667eea; margin: 10px 0; width: 100%; font-family: inherit; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; padding: 30px; border-radius: 10px; max-width: 400px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .modal-btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; margin: 10px; font-weight: 600; font-size: 0.95rem; }
+        .modal-btn-confirm { background: #e74c3c; color: white; }
+        .modal-btn-cancel { background: #95a5a6; color: white; }
+        .item-card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
+        .item-info h4 { color: #667eea; margin-bottom: 5px; }
+        .item-info p { font-size: 0.85rem; color: #999; }
+        .btn-delete { background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        .vocab-item { background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #667eea; }
+        @media (min-width: 768px) {
+            body { padding: 20px; }
+            .header { padding: 30px; }
+            .content { padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Mitchell's Homeschool Dashboard</h1>
+            <p>Age 15 | 5th Grade Level</p>
+            <div class="sync-badge" id="syncBadge">Connecting...</div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('schedule', this)">📅 Schedule</button>
+            <button class="tab-btn" onclick="switchTab('curriculum', this)">📖 Curriculum</button>
+            <button class="tab-btn" onclick="switchTab('reading', this)">📚 Reading</button>
+            <button class="tab-btn" onclick="switchTab('scouts', this)">⚜️ Scouts</button>
+            <button class="tab-btn" onclick="switchTab('manage', this)">⚙️ Manage</button>
+        </div>
+        
+        <!-- SCHEDULE TAB -->
+        <div id="schedule" class="content active">
+            <h2>Weekly Schedule & Progress</h2>
+            <button class="btn btn-danger" onclick="openResetModal()">🔄 Reset Week</button>
+            
+            <div class="section">
+                <h3>Weekday Activities</h3>
+                <table>
+                    <tr><th>Time</th><th>Activity</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr>
+                    <tr><td>7:45</td><td>Stretch</td><td><input type="checkbox" id="s-mon"></td><td><input type="checkbox" id="s-tue"></td><td><input type="checkbox" id="s-wed"></td><td><input type="checkbox" id="s-thu"></td><td><input type="checkbox" id="s-fri"></td></tr>
+                    <tr><td>10:00</td><td>Math</td><td><input type="checkbox" id="m-mon"></td><td><input type="checkbox" id="m-tue"></td><td><input type="checkbox" id="m-wed"></td><td><input type="checkbox" id="m-thu"></td><td><input type="checkbox" id="m-fri"></td></tr>
+                    <tr><td>10:45</td><td>English</td><td><input type="checkbox" id="e-mon"></td><td><input type="checkbox" id="e-tue"></td><td><input type="checkbox" id="e-wed"></td><td><input type="checkbox" id="e-thu"></td><td><input type="checkbox" id="e-fri"></td></tr>
+                    <tr><td>11:30</td><td>Writing</td><td><input type="checkbox" id="h-mon"></td><td><input type="checkbox" id="h-tue"></td><td><input type="checkbox" id="h-wed"></td><td><input type="checkbox" id="h-thu"></td><td><input type="checkbox" id="h-fri"></td></tr>
+                    <tr><td>12:00</td><td>Language</td><td><input type="checkbox" id="l-mon"></td><td><input type="checkbox" id="l-tue"></td><td><input type="checkbox" id="l-wed"></td><td><input type="checkbox" id="l-thu"></td><td><input type="checkbox" id="l-fri"></td></tr>
+                    <tr><td>1:00</td><td>Science/History</td><td><input type="checkbox" id="sc-mon"></td><td><input type="checkbox" id="sc-tue"></td><td><input type="checkbox" id="sc-wed"></td><td><input type="checkbox" id="sc-thu"></td><td><input type="checkbox" id="sc-fri"></td></tr>
+                    <tr><td>2:00</td><td>Scouts</td><td><input type="checkbox" id="b-mon"></td><td><input type="checkbox" id="b-tue"></td><td><input type="checkbox" id="b-wed"></td><td><input type="checkbox" id="b-thu"></td><td><input type="checkbox" id="b-fri"></td></tr>
+                    <tr><td>3:00</td><td>Reading</td><td><input type="checkbox" id="r-mon"></td><td><input type="checkbox" id="r-tue"></td><td><input type="checkbox" id="r-wed"></td><td><input type="checkbox" id="r-thu"></td><td><input type="checkbox" id="r-fri"></td></tr>
+                    <tr><td>4:15</td><td>Boxing</td><td><input type="checkbox" id="bx-mon"></td><td><input type="checkbox" id="bx-tue"></td><td><input type="checkbox" id="bx-wed"></td><td><input type="checkbox" id="bx-thu"></td><td><input type="checkbox" id="bx-fri"></td></tr>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h3>Weekend Activities</h3>
+                <table>
+                    <tr><th>Time</th><th>Saturday</th><th></th><th>Sunday</th><th></th></tr>
+                    <tr><td>10:00</td><td>Piano</td><td><input type="checkbox" id="p-sat"></td><td>Flight School</td><td><input type="checkbox" id="f-sun"></td></tr>
+                    <tr><td>11:00</td><td>Scout Work</td><td><input type="checkbox" id="sb-sat"></td><td>Flight Sim</td><td><input type="checkbox" id="fs-sun"></td></tr>
+                </table>
+            </div>
+        </div>
+        
+        <!-- CURRICULUM TAB -->
+        <div id="curriculum" class="content">
+            <h2>Curriculum Overview</h2>
+            <div class="section">
+                <h3>📐 Mathematics (10:00-10:45 AM)</h3>
+                <p><strong>Platform:</strong> Khan Academy | <strong>Level:</strong> 5th Grade</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Fractions, decimals, percentages</li>
+                    <li>Word problems and multi-step equations</li>
+                    <li>Geometry basics (area, perimeter, volume)</li>
+                </ul>
+            </div>
+            <div class="section">
+                <h3>📝 English (10:45-11:30 AM)</h3>
+                <p><strong>Reading Level:</strong> 7-8th Grade</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Daily reading: 1-2 chapters from current book</li>
+                    <li>Vocabulary: 5-7 new words per day</li>
+                    <li>Grammar practice via Khan Academy</li>
+                </ul>
+            </div>
+            <div class="section">
+                <h3>✍️ Handwriting & Typing (11:30-12:00 PM)</h3>
+                <ul style="margin-left: 20px;">
+                    <li>Handwriting: Print (Mon/Wed/Fri), Cursive (Tue/Thu)</li>
+                    <li>Typing Club: Goal 30+ WPM</li>
+                </ul>
+            </div>
+            <div class="section">
+                <h3>🔬 Science & 📜 History (1:00-2:00 PM)</h3>
+                <p><strong>Platform:</strong> Khan Academy (Alternate days)</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Science: Ecosystems, Matter & Energy, Earth Systems</li>
+                    <li>History: U.S. Government, Geography, Economics</li>
+                </ul>
+            </div>
+            <div class="section">
+                <h3>⚜️ Boy Scout Merit Badges (2:00-3:00 PM)</h3>
+                <p><strong>Goal:</strong> Complete 2-3 badges this quarter</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>First Aid, Camping, Citizenship</li>
+                    <li>Environmental Science, Personal Fitness</li>
+                </ul>
+            </div>
+            <div class="section">
+                <h3>🎹 Piano & ✈️ Flight School (Weekends)</h3>
+                <ul style="margin-left: 20px;">
+                    <li>Saturday: Piano lessons (beginner level)</li>
+                    <li>Sunday: Flight book study + simulator practice</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- READING TAB -->
+        <div id="reading" class="content">
+            <h2>Reading & Vocabulary</h2>
+            <div class="section">
+                <h3>Select Current Book</h3>
+                <select id="bookSelect" onchange="displayVocab()"></select>
+            </div>
+            <div id="vocabDisplay"></div>
+        </div>
+        
+        <!-- SCOUTS TAB -->
+        <div id="scouts" class="content">
+            <h2>Merit Badges</h2>
+            <div class="section">
+                <h3>Select Merit Badge</h3>
+                <select id="badgeSelect" onchange="displayBadge()"></select>
+            </div>
+            <div id="badgeDisplay"></div>
+        </div>
+        
+        <!-- MANAGE TAB -->
+        <div id="manage" class="content">
+            <h2>Manage Books & Badges</h2>
+            
+            <div class="section">
+                <h3>Add New Book</h3>
+                <input type="text" id="bookNameInput" placeholder="Book Title">
+                <textarea id="bookVocabInput" placeholder="Word|Definition|Part&#10;Example: Courage|Bravery|noun" rows="5"></textarea>
+                <button class="btn" onclick="addNewBook()">Add Book</button>
+                <div id="booksList" style="margin-top: 20px;"></div>
+            </div>
+            
+            <div class="section">
+                <h3>Add New Badge</h3>
+                <input type="text" id="badgeNameInput" placeholder="Badge Name">
+                <textarea id="badgeReqsInput" placeholder="Requirement (one per line)" rows="4"></textarea>
+                <button class="btn" onclick="addNewBadge()">Add Badge</button>
+                <div id="badgesList" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="resetModal" class="modal">
+        <div class="modal-content">
+            <h3>Reset Week?</h3>
+            <p>This will clear all checkboxes and sync across devices.</p>
+            <button class="modal-btn modal-btn-cancel" onclick="closeResetModal()">Cancel</button>
+            <button class="modal-btn modal-btn-confirm" onclick="doReset()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Realtime Database URL
+        const FIREBASE_URL = 'https://schooling-dashboard-default-rtdb.firebaseio.com';
+        
+        let books = ["The Giver", "Holes"];
+        let vocabData = [
+            [{w:"Apprehensive",d:"Anxious",p:"adj"},{w:"Precision",d:"Exactness",p:"noun"},{w:"Utopia",d:"Perfect society",p:"noun"},{w:"Serene",d:"Calm",p:"adj"},{w:"Remorse",d:"Deep regret",p:"noun"},{w:"Integrity",d:"Moral principles",p:"noun"},{w:"Empathy",d:"Understanding",p:"noun"},{w:"Anguish",d:"Severe pain",p:"noun"},{w:"Fugitive",d:"Escaping",p:"noun"},{w:"Obsolete",d:"No longer used",p:"adj"}],
+            [{w:"Parched",d:"Dry",p:"adj"},{w:"Perseverance",d:"Effort",p:"noun"},{w:"Desolate",d:"Empty",p:"adj"},{w:"Defiant",d:"Resistant",p:"adj"},{w:"Excavate",d:"Dig out",p:"verb"},{w:"Refuge",d:"Safety",p:"noun"},{w:"Futile",d:"Pointless",p:"adj"},{w:"Vast",d:"Great size",p:"adj"},{w:"Condemned",d:"Sentenced",p:"adj"},{w:"Resilient",d:"Quick recovery",p:"adj"}]
+        ];
+        let badges = [
+            ["First Aid",["Learn CPR","Practice bandaging","Treat burns","Create emergency kit"]],
+            ["Camping",["Learn knots","Set up tent","Plan meals","Leave No Trace"]],
+            ["Citizenship",["Attend meeting","Service project","Study government"]],
+            ["Environmental",["Water cycle","Soil tests","Conservation project"]],
+            ["Fitness",["12-week plan","Track exercise","Nutrition study"]]
+        ];
+
+        // UI Functions
+        function switchTab(tabName, btn) {
+            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            btn.classList.add('active');
+            if (tabName === 'manage') updateManageDisplay();
+        }
+
+        function displayVocab() {
+            const idx = document.getElementById('bookSelect').value;
+            let html = '<div class="section"><h3>' + books[idx] + ' Vocabulary</h3>';
+            vocabData[idx].forEach((w, i) => {
+                html += '<div class="vocab-item"><strong>' + (i+1) + '. ' + w.w + '</strong> <em>(' + w.p + ')</em><br>' + w.d + '</div>';
+            });
+            html += '</div>';
+            document.getElementById('vocabDisplay').innerHTML = html;
+        }
+
+        function displayBadge() {
+            const idx = document.getElementById('badgeSelect').value;
+            let html = '<div class="section"><h3>' + badges[idx][0] + '</h3><ul style="margin-left:20px;">';
+            badges[idx][1].forEach(r => html += '<li style="margin:8px 0;">' + r + '</li>');
+            html += '</ul></div>';
+            document.getElementById('badgeDisplay').innerHTML = html;
+        }
+
+        function updateSelects() {
+            let html = '';
+            books.forEach((b, i) => html += '<option value="' + i + '">' + b + '</option>');
+            document.getElementById('bookSelect').innerHTML = html;
+            displayVocab();
+
+            html = '';
+            badges.forEach((b, i) => html += '<option value="' + i + '">' + b[0] + '</option>');
+            document.getElementById('badgeSelect').innerHTML = html;
+            displayBadge();
+        }
+
+        function addNewBook() {
+            const name = document.getElementById('bookNameInput').value.trim();
+            const text = document.getElementById('bookVocabInput').value.trim();
+            if (!name || !text) return alert('Enter book name and vocabulary');
+            const words = [];
+            text.split('\n').forEach(line => {
+                const parts = line.split('|').map(x => x.trim());
+                if (parts.length === 3) words.push({w:parts[0],d:parts[1],p:parts[2]});
+            });
+            if (words.length < 2) return alert('Add at least 2 vocabulary words');
+            books.push(name);
+            vocabData.push(words);
+            saveToFirebase();
+            document.getElementById('bookNameInput').value = '';
+            document.getElementById('bookVocabInput').value = '';
+            updateSelects();
+            updateManageDisplay();
+            alert('Added ' + name);
+        }
+
+        function deleteBook(idx) {
+            if (books.length <= 1) return alert('Keep at least one book');
+            if (confirm('Delete ' + books[idx] + '?')) {
+                books.splice(idx, 1);
+                vocabData.splice(idx, 1);
+                saveToFirebase();
+                updateSelects();
+                updateManageDisplay();
+            }
+        }
+
+        function addNewBadge() {
+            const name = document.getElementById('badgeNameInput').value.trim();
+            const text = document.getElementById('badgeReqsInput').value.trim();
+            if (!name || !text) return alert('Enter badge name and requirements');
+            const reqs = text.split('\n').filter(l => l.trim());
+            if (reqs.length < 1) return alert('Add at least 1 requirement');
+            badges.push([name, reqs]);
+            saveToFirebase();
+            document.getElementById('badgeNameInput').value = '';
+            document.getElementById('badgeReqsInput').value = '';
+            updateSelects();
+            updateManageDisplay();
+            alert('Added ' + name);
+        }
+
+        function deleteBadge(idx) {
+            if (badges.length <= 1) return alert('Keep at least one badge');
+            if (confirm('Delete ' + badges[idx][0] + '?')) {
+                badges.splice(idx, 1);
+                saveToFirebase();
+                updateSelects();
+                updateManageDisplay();
+            }
+        }
+
+        function updateManageDisplay() {
+            let html = '';
+            books.forEach((b, i) => {
+                html += '<div class="item-card"><div class="item-info"><h4>' + b + '</h4><p>' + vocabData[i].length + ' words</p></div><button class="btn-delete" onclick="deleteBook(' + i + ')">Delete</button></div>';
+            });
+            document.getElementById('booksList').innerHTML = html;
+
+            html = '';
+            badges.forEach((b, i) => {
+                html += '<div class="item-card"><div class="item-info"><h4>' + b[0] + '</h4><p>' + b[1].length + ' requirements</p></div><button class="btn-delete" onclick="deleteBadge(' + i + ')">Delete</button></div>';
+            });
+            document.getElementById('badgesList').innerHTML = html;
+        }
+
+        function openResetModal() {
+            document.getElementById('resetModal').classList.add('show');
+        }
+
+        function closeResetModal() {
+            document.getElementById('resetModal').classList.remove('show');
+        }
+
+        function doReset() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            saveCheckboxes();
+            closeResetModal();
+        }
+
+        // Firebase Functions
+        function saveCheckboxes() {
+            const data = {};
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                data[cb.id] = cb.checked;
+            });
+            fetch(FIREBASE_URL + '/checks.json', {
+                method: 'PUT',
+                body: JSON.stringify(data)
+            }).catch(e => console.log('Save error:', e));
+        }
+
+        function loadCheckboxes() {
+            fetch(FIREBASE_URL + '/checks.json')
+                .then(r => r.json())
+                .then(data => {
+                    if (data) {
+                        Object.entries(data).forEach(([id, checked]) => {
+                            const el = document.getElementById(id);
+                            if (el) el.checked = checked;
+                        });
+                    }
+                }).catch(e => console.log('Load error:', e));
+        }
+
+        function saveToFirebase() {
+            fetch(FIREBASE_URL + '/books.json', { method: 'PUT', body: JSON.stringify(books) }).catch(e => {});
+            fetch(FIREBASE_URL + '/vocab.json', { method: 'PUT', body: JSON.stringify(vocabData) }).catch(e => {});
+            fetch(FIREBASE_URL + '/badges.json', { method: 'PUT', body: JSON.stringify(badges) }).catch(e => {});
+        }
+
+        function loadFromFirebase() {
+            fetch(FIREBASE_URL + '/books.json')
+                .then(r => r.json())
+                .then(data => { if (data) books = data; updateSelects(); })
+                .catch(e => {});
+            
+            fetch(FIREBASE_URL + '/vocab.json')
+                .then(r => r.json())
+                .then(data => { if (data) vocabData = data; displayVocab(); })
+                .catch(e => {});
+            
+            fetch(FIREBASE_URL + '/badges.json')
+                .then(r => r.json())
+                .then(data => { if (data) badges = data; updateSelects(); })
+                .catch(e => {});
+        }
+
+        function checkConnection() {
+            fetch(FIREBASE_URL + '/.json', { method: 'GET' })
+                .then(() => {
+                    document.getElementById('syncBadge').textContent = '☁️ Cloud Synced';
+                    document.getElementById('syncBadge').classList.add('online');
+                })
+                .catch(() => {
+                    document.getElementById('syncBadge').textContent = '⚠️ Offline';
+                    document.getElementById('syncBadge').classList.remove('online');
+                });
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            updateSelects();
+            loadFromFirebase();
+            loadCheckboxes();
+            updateManageDisplay();
+            checkConnection();
+            setInterval(checkConnection, 5000);
+
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', saveCheckboxes);
+            });
+        });
+    </script>
+</body>
+</html>

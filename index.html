@@ -24,7 +24,8 @@
         .content h2 { font-size: 1.3rem; margin-bottom: 15px; color: #667eea; }
         .section { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #667eea; }
         .section h3 { color: #667eea; margin-bottom: 10px; font-size: 1.1rem; }
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 15px -20px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; min-width: 600px; }
         th { background: #667eea; color: white; padding: 12px; text-align: left; font-weight: 600; }
         td { padding: 12px; border-bottom: 1px solid #ddd; }
         tr:nth-child(even) { background: #f8f9fa; }
@@ -75,6 +76,7 @@
             
             <div class="section">
                 <h3>Weekday Activities</h3>
+                <div class="table-wrapper">
                 <table>
                     <tr><th>Time</th><th>Activity</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr>
                     <tr><td>7:45</td><td>Stretch</td><td><input type="checkbox" id="s-mon"></td><td><input type="checkbox" id="s-tue"></td><td><input type="checkbox" id="s-wed"></td><td><input type="checkbox" id="s-thu"></td><td><input type="checkbox" id="s-fri"></td></tr>
@@ -87,15 +89,18 @@
                     <tr><td>3:00</td><td>Reading</td><td><input type="checkbox" id="r-mon"></td><td><input type="checkbox" id="r-tue"></td><td><input type="checkbox" id="r-wed"></td><td><input type="checkbox" id="r-thu"></td><td><input type="checkbox" id="r-fri"></td></tr>
                     <tr><td>4:15</td><td>Boxing</td><td><input type="checkbox" id="bx-mon"></td><td><input type="checkbox" id="bx-tue"></td><td><input type="checkbox" id="bx-wed"></td><td><input type="checkbox" id="bx-thu"></td><td><input type="checkbox" id="bx-fri"></td></tr>
                 </table>
+                </div>
             </div>
             
             <div class="section">
                 <h3>Weekend Activities</h3>
+                <div class="table-wrapper">
                 <table>
                     <tr><th>Time</th><th>Saturday</th><th></th><th>Sunday</th><th></th></tr>
                     <tr><td>10:00</td><td>Piano</td><td><input type="checkbox" id="p-sat"></td><td>Flight School</td><td><input type="checkbox" id="f-sun"></td></tr>
                     <tr><td>11:00</td><td>Scout Work</td><td><input type="checkbox" id="sb-sat"></td><td>Flight Sim</td><td><input type="checkbox" id="fs-sun"></td></tr>
                 </table>
+                </div>
             </div>
         </div>
         

@@ -5,89 +5,141 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#667eea">
-    <title>Mitchell's Dashboard</title>
+    <title>Mitchell's Study Plan</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 10px; color: #333; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 8px; color: #333; min-height: 100vh; }
         .container { max-width: 1400px; margin: 0 auto; }
-        .header { background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .header h1 { color: #667eea; margin-bottom: 5px; font-size: 1.5rem; }
-        .header p { font-size: 0.85rem; color: #666; }
-        .sync-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; margin-top: 10px; font-weight: 600; background: #e74c3c; color: white; }
+        .header { background: white; padding: 16px; border-radius: 15px; margin-bottom: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .header h1 { color: #667eea; margin-bottom: 5px; font-size: 1.3rem; }
+        .header p { font-size: 0.8rem; color: #666; }
+        .sync-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-size: 0.75rem; margin-top: 10px; font-weight: 600; background: #e74c3c; color: white; }
         .sync-badge.online { background: #27ae60; }
-        .tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .tab-btn { background: white; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; color: #666; border: none; font-size: 0.95rem; transition: all 0.2s; }
+        .tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 8px; }
+        .tab-btn { background: white; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; color: #666; border: none; font-size: 0.8rem; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 6px; }
         .tab-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .tab-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .content { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; }
+        .tab-icon { font-size: 1.2rem; }
+        .content { background: white; padding: 16px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; }
         .content.active { display: block; }
-        .content h2 { font-size: 1.3rem; margin-bottom: 15px; color: #667eea; }
-        .section { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #667eea; }
-        .section h3 { color: #667eea; margin-bottom: 10px; font-size: 1.1rem; }
-        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 15px -20px; }
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; min-width: 600px; }
-        th { background: #667eea; color: white; padding: 12px; text-align: left; font-weight: 600; }
-        td { padding: 12px; border-bottom: 1px solid #ddd; }
+        .content h2 { font-size: 1.2rem; margin-bottom: 12px; color: #667eea; }
+        .section { background: #f8f9fa; padding: 12px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid #667eea; }
+        .section h3 { color: #667eea; margin-bottom: 8px; font-size: 1rem; }
+        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px -16px; padding: 0 16px; }
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; min-width: 500px; }
+        th { background: #667eea; color: white; padding: 10px; text-align: left; font-weight: 600; font-size: 0.85rem; }
+        td { padding: 10px; border-bottom: 1px solid #ddd; font-size: 0.9rem; }
         tr:nth-child(even) { background: #f8f9fa; }
-        input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: #667eea; }
-        .btn { background: #667eea; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin: 10px 10px 10px 0; font-size: 0.95rem; }
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #667eea; }
+        .btn { background: #667eea; color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin: 8px 8px 8px 0; font-size: 0.85rem; }
         .btn:hover { background: #764ba2; }
         .btn-danger { background: #e74c3c; }
         .btn-danger:hover { background: #c0392b; }
-        input[type="text"], textarea, select { padding: 12px; font-size: 1rem; border-radius: 5px; border: 2px solid #667eea; margin: 10px 0; width: 100%; font-family: inherit; }
+        input[type="text"], textarea, select { padding: 10px; font-size: 1rem; border-radius: 5px; border: 2px solid #667eea; margin: 8px 0; width: 100%; font-family: inherit; }
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
         .modal.show { display: flex; }
-        .modal-content { background: white; padding: 30px; border-radius: 10px; max-width: 400px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .modal-btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; margin: 10px; font-weight: 600; font-size: 0.95rem; }
+        .modal-content { background: white; padding: 20px; border-radius: 10px; max-width: 90%; max-width: 400px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .modal-btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; margin: 8px; font-weight: 600; font-size: 0.9rem; }
         .modal-btn-confirm { background: #e74c3c; color: white; }
         .modal-btn-cancel { background: #95a5a6; color: white; }
-        .item-card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
-        .item-info h4 { color: #667eea; margin-bottom: 5px; }
-        .item-info p { font-size: 0.85rem; color: #999; }
-        .btn-delete { background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: 600; }
-        .vocab-item { background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #667eea; }
-        @media (min-width: 768px) {
+        .item-card { background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .item-info { flex: 1; min-width: 200px; }
+        .item-info h4 { color: #667eea; margin-bottom: 4px; font-size: 0.95rem; }
+        .item-info p { font-size: 0.8rem; color: #999; }
+        .btn-delete { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 0.8rem; }
+        .vocab-item { background: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #667eea; }
+        .vocab-item strong { font-size: 0.95rem; }
+        .vocab-item em { font-size: 0.85rem; }
+        
+        @media (max-width: 480px) {
+            body { padding: 6px; }
+            .container { padding: 0 4px; }
+            .header { padding: 12px; margin-bottom: 10px; }
+            .header h1 { font-size: 1.1rem; }
+            .tabs { gap: 4px; margin-bottom: 10px; }
+            .tab-btn { padding: 8px 10px; font-size: 0.7rem; }
+            .tab-icon { font-size: 1rem; }
+            .tab-label { display: none; }
+            .content { padding: 12px; margin-bottom: 10px; }
+            .section { padding: 10px; margin-bottom: 10px; }
+            .section h3 { font-size: 0.9rem; }
+            table { min-width: 450px; font-size: 0.8rem; }
+            th, td { padding: 8px; }
+            .btn { padding: 8px 12px; font-size: 0.8rem; margin: 6px 6px 6px 0; }
+            .table-wrapper { margin: 10px -12px; padding: 0 12px; }
+            .item-card { flex-direction: column; align-items: flex-start; }
+            .btn-delete { align-self: flex-end; margin-top: 8px; }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            body { padding: 12px; }
+            .header { padding: 20px; }
+            .header h1 { font-size: 1.2rem; }
+            .content { padding: 20px; }
+            .tab-btn { padding: 10px 14px; font-size: 0.85rem; }
+            .tab-label { display: inline; }
+        }
+
+        @media (min-width: 769px) {
             body { padding: 20px; }
             .header { padding: 30px; }
             .content { padding: 30px; }
+            .tab-btn { padding: 12px 20px; font-size: 0.95rem; }
+            .header h1 { font-size: 1.5rem; }
+            .tab-label { display: inline; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📚 Mitchell's Homeschool Dashboard</h1>
-            <p>Age 15 | 5th Grade Level</p>
+            <h1>Mitchell's Study Plan</h1>
+            <p>Study & Progress Tracker</p>
             <div class="sync-badge" id="syncBadge">Connecting...</div>
         </div>
         
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('schedule', this)">📅 Schedule</button>
-            <button class="tab-btn" onclick="switchTab('curriculum', this)">📖 Curriculum</button>
-            <button class="tab-btn" onclick="switchTab('reading', this)">📚 Reading</button>
-            <button class="tab-btn" onclick="switchTab('scouts', this)">⚜️ Scouts</button>
-            <button class="tab-btn" onclick="switchTab('manage', this)">⚙️ Manage</button>
+            <button class="tab-btn active" onclick="switchTab('schedule', this)"><span class="tab-icon">📅</span><span class="tab-label">Schedule</span></button>
+            <button class="tab-btn" onclick="switchTab('curriculum', this)"><span class="tab-icon">📖</span><span class="tab-label">Curriculum</span></button>
+            <button class="tab-btn" onclick="switchTab('reading', this)"><span class="tab-icon">📚</span><span class="tab-label">Reading</span></button>
+            <button class="tab-btn" onclick="switchTab('goals', this)"><span class="tab-icon">🎯</span><span class="tab-label">Goals</span></button>
+            <button class="tab-btn" onclick="switchTab('scouting', this)"><span class="tab-icon">⚜️</span><span class="tab-label">Merit Badges</span></button>
+            <button class="tab-btn" onclick="switchTab('manage', this)"><span class="tab-icon">⚙️</span><span class="tab-label">Manage</span></button>
         </div>
         
         <!-- SCHEDULE TAB -->
         <div id="schedule" class="content active">
             <h2>Daily Schedule & Progress</h2>
-            <p style="color: #666; margin-bottom: 15px;"><strong>9:30 AM – 4:00 PM</strong> (6.5 hours including breaks)</p>
-            <button class="btn btn-danger" onclick="openResetModal()">🔄 Reset Week</button>
+            <p style="color: #666; margin-bottom: 15px;"><strong>9:30 AM – 3:45 PM</strong> (6.25 hours including lunch)</p>
+            <button class="btn btn-danger" onclick="openResetModal()">Reset Week</button>
+            
+            <div class="section">
+                <h3>Monthly Rotation (Sept 2025 - June 2026)</h3>
+                <div class="table-wrapper">
+                <table>
+                    <tr><th>Month</th><th>Morning Subject (9:30-11:40 AM)</th><th>Afternoon Subject (12:10-3:00 PM)</th><th>Key Milestones</th></tr>
+                    <tr><td>Nov 2025</td><td>Math (Pre-GED basics)</td><td>Language Arts + Typing Club</td><td>Complete 4-6 math lessons (70% mastery)</td></tr>
+                    <tr><td>Dec 2025</td><td>Math (Decimals/Algebra intro)</td><td>Language Arts + Typing Club</td><td>Full practice test end-month</td></tr>
+                    <tr><td>Jan 2026</td><td>Science (Life/Physical basics)</td><td>Language Arts + Typing Club</td><td>Switch to GED-style quizzes</td></tr>
+                    <tr><td>Feb 2026</td><td>Science (Earth/Space)</td><td>Social Studies + Typing Club</td><td>Monthly practice test</td></tr>
+                    <tr><td>Mar 2026</td><td>Math (GED-level Algebra/Geometry)</td><td>Mixed Review + Typing Club</td><td>Weekly timed practices</td></tr>
+                    <tr><td>Apr 2026</td><td>Math (Advanced problem-solving)</td><td>Mixed Review + Typing Club</td><td>Schedule first GED if ready</td></tr>
+                    <tr><td>May-Jun 2026</td><td>GED Testing/Flex Review</td><td>GED Testing/Flex Review</td><td>Take 1-2 subjects/month</td></tr>
+                </table>
+                </div>
+            </div>
             
             <div class="section">
                 <h3>Weekday Activities</h3>
                 <div class="table-wrapper">
                 <table>
                     <tr><th>Time</th><th>Activity</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr>
-                    <tr><td>7:45–8:45</td><td>Exercise/Stretch</td><td><input type="checkbox" id="ex-mon"></td><td><input type="checkbox" id="ex-tue"></td><td><input type="checkbox" id="ex-wed"></td><td><input type="checkbox" id="ex-thu"></td><td><input type="checkbox" id="ex-fri"></td></tr>
-                    <tr><td>9:30–10:15</td><td>Math (Khan Academy)</td><td><input type="checkbox" id="m-mon"></td><td><input type="checkbox" id="m-tue"></td><td><input type="checkbox" id="m-wed"></td><td><input type="checkbox" id="m-thu"></td><td><input type="checkbox" id="m-fri"></td></tr>
-                    <tr><td>10:30–11:00</td><td>Science or History (Khan)</td><td><input type="checkbox" id="sh-mon"></td><td><input type="checkbox" id="sh-tue"></td><td><input type="checkbox" id="sh-wed"></td><td><input type="checkbox" id="sh-thu"></td><td><input type="checkbox" id="sh-fri"></td></tr>
-                    <tr><td>11:15–12:30</td><td>English (Khan Grammar)</td><td><input type="checkbox" id="e-mon"></td><td><input type="checkbox" id="e-tue"></td><td><input type="checkbox" id="e-wed"></td><td><input type="checkbox" id="e-thu"></td><td><input type="checkbox" id="e-fri"></td></tr>
-                    <tr><td>12:45–2:00</td><td>Reading & Vocabulary</td><td><input type="checkbox" id="rv-mon"></td><td><input type="checkbox" id="rv-tue"></td><td><input type="checkbox" id="rv-wed"></td><td><input type="checkbox" id="rv-thu"></td><td><input type="checkbox" id="rv-fri"></td></tr>
-                    <tr><td>2:00–2:30</td><td>Handwriting & Typing</td><td><input type="checkbox" id="ht-mon"></td><td><input type="checkbox" id="ht-tue"></td><td><input type="checkbox" id="ht-wed"></td><td><input type="checkbox" id="ht-thu"></td><td><input type="checkbox" id="ht-fri"></td></tr>
-                    <tr><td>2:45–3:15</td><td>Language (Duolingo)</td><td><input type="checkbox" id="l-mon"></td><td><input type="checkbox" id="l-tue"></td><td><input type="checkbox" id="l-wed"></td><td><input type="checkbox" id="l-thu"></td><td><input type="checkbox" id="l-fri"></td></tr>
-                    <tr><td>3:30–4:00</td><td>Piano (Simply Music)</td><td><input type="checkbox" id="p-mon"></td><td><input type="checkbox" id="p-tue"></td><td><input type="checkbox" id="p-wed"></td><td><input type="checkbox" id="p-thu"></td><td><input type="checkbox" id="p-fri"></td></tr>
+                    <tr><td>9:30–11:40</td><td>Morning Subject (Math/Science/Mixed)</td><td><input type="checkbox" id="m-mon"></td><td><input type="checkbox" id="m-tue"></td><td><input type="checkbox" id="m-wed"></td><td><input type="checkbox" id="m-thu"></td><td><input type="checkbox" id="m-fri"></td></tr>
+                    <tr><td>11:40 AM–12:10 PM</td><td>Lunch Break</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                    <tr><td>12:10–3:00</td><td>Afternoon Subject (Language/Social/Mixed) + Typing Club</td><td><input type="checkbox" id="a-mon"></td><td><input type="checkbox" id="a-tue"></td><td><input type="checkbox" id="a-wed"></td><td><input type="checkbox" id="a-thu"></td><td><input type="checkbox" id="a-fri"></td></tr>
+                    <tr><td>3:00–3:30</td><td>Reading & Vocabulary</td><td><input type="checkbox" id="rv-mon"></td><td><input type="checkbox" id="rv-tue"></td><td><input type="checkbox" id="rv-wed"></td><td><input type="checkbox" id="rv-thu"></td><td><input type="checkbox" id="rv-fri"></td></tr>
+                    <tr><td>3:30–3:50</td><td>Duolingo (Optional)</td><td><input type="checkbox" id="d-mon"></td><td><input type="checkbox" id="d-tue"></td><td><input type="checkbox" id="d-wed"></td><td><input type="checkbox" id="d-thu"></td><td><input type="checkbox" id="d-fri"></td></tr>
+                    <tr><td>3:50–4:00</td><td>Wrap-Up & Plan Next Day</td><td><input type="checkbox" id="w-mon"></td><td><input type="checkbox" id="w-tue"></td><td><input type="checkbox" id="w-wed"></td><td><input type="checkbox" id="w-thu"></td><td><input type="checkbox" id="w-fri"></td></tr>
                 </table>
                 </div>
             </div>
@@ -96,75 +148,76 @@
         <!-- CURRICULUM TAB -->
         <div id="curriculum" class="content">
             <h2>Curriculum Overview</h2>
-            <p style="color: #666; margin-bottom: 20px;"><strong>Daily Schedule:</strong> 9:30 AM – 4:00 PM (6.5 hours including breaks)</p>
+            <p style="color: #666; margin-bottom: 20px;"><strong>Daily Schedule:</strong> 9:30 AM – 3:45 PM (6.25 hours including lunch)</p>
             
             <div class="section">
-                <h3>📐 Mathematics (9:30–10:15 AM)</h3>
-                <p><strong>Platform:</strong> Khan Academy | <strong>Level:</strong> 5th Grade</p>
-                <p><strong>Focus:</strong> Fractions, decimals, word problems, addressing learning gaps</p>
+                <h3>Mathematical Reasoning (Morning: 9:30–11:40 AM, Nov-Dec & Mar-Apr)</h3>
+                <p><strong>Platform:</strong> Khan Academy & USAHello | <strong>Level:</strong> 4th-5th Grade Foundation → GED</p>
+                <p><strong>Focus:</strong> Arithmetic, fractions, decimals, algebra, geometry, data analysis</p>
                 <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>Complete 3–4 exercises per session</li>
-                    <li>Mom reviews progress daily</li>
-                    <li>Focus on word problems and real-world applications</li>
+                    <li>Complete 2-3 USAHello lessons/videos per session</li>
+                    <li>Practice exercises for 80% mastery per topic</li>
+                    <li>Build up to GED-level algebra & problem-solving</li>
                 </ul>
             </div>
             
             <div class="section">
-                <h3>🔬 Science & 📜 History (10:30–11:00 AM, Alternate Days)</h3>
-                <p><strong>Platform:</strong> Khan Academy | <strong>Level:</strong> 5th Grade</p>
+                <h3>Reasoning Through Language Arts (Afternoon: 12:10–3:00 PM, All Months)</h3>
+                <p><strong>Platform:</strong> USAHello & Typing Club | <strong>Focus:</strong> Reading, writing, grammar, essay composition</p>
                 <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li><strong>Science (Mon/Wed/Fri):</strong> Ecosystems, matter & energy, Earth systems</li>
-                    <li><strong>History (Tue/Thu):</strong> U.S. government, geography, economics</li>
-                    <li>Complete 2–3 videos/exercises per session</li>
+                    <li>Grammar & writing instruction (2-3 USAHello videos)</li>
+                    <li>Essay structure & timed writing practice</li>
+                    <li>Typing Club drills (20-30 min) for GED essay readiness</li>
+                    <li>Goal: 40+ WPM for 45-minute essay section</li>
                 </ul>
             </div>
             
             <div class="section">
-                <h3>📝 English (11:15 AM–12:30 PM)</h3>
-                <p><strong>Platform:</strong> Khan Academy</p>
+                <h3>Science (Morning: 9:30–11:40 AM, Jan-Feb)</h3>
+                <p><strong>Platform:</strong> Khan Academy & USAHello</p>
                 <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>Grammar practice and instruction</li>
-                    <li>Writing exercises</li>
-                    <li>Language arts skills development</li>
+                    <li><strong>Jan (Life/Physical Science):</strong> Cells, biology, ecosystems, forces, energy</li>
+                    <li><strong>Feb (Earth/Space Science):</strong> Geology, weather, space, data interpretation</li>
+                    <li>Complete 2-3 lessons per session; use quizzes to verify 70%+ mastery</li>
                 </ul>
             </div>
             
             <div class="section">
-                <h3>📚 Reading & Vocabulary (12:45–2:00 PM)</h3>
-                <p><strong>Current Book:</strong> The Giver</p>
+                <h3>Social Studies (Afternoon: 12:10–3:00 PM, Feb)</h3>
+                <p><strong>Platform:</strong> USAHello | <strong>Focus:</strong> U.S. history, civics, government, economics, geography</p>
                 <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>Read 20 minutes daily</li>
-                    <li>Work on 5–7 vocabulary words daily</li>
-                    <li>Activities: guess meanings, write sentences, maintain vocabulary notebook</li>
-                    <li><strong>Weekly Quiz:</strong> Write a short story using 10 vocabulary words</li>
+                    <li>Analyze timelines and maps</li>
+                    <li>Understand civics concepts & historical events</li>
+                    <li>Practice short answer responses</li>
                 </ul>
             </div>
             
             <div class="section">
-                <h3>✍️ Handwriting & Typing (2:00–2:30 PM)</h3>
+                <h3>Reading & Vocabulary (3:00–3:30 PM, Daily)</h3>
+                <p><strong>Purpose:</strong> Build comprehension and expand vocabulary across all subjects</p>
                 <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li><strong>Handwriting (15 min):</strong> Copy passages from books</li>
-                    <li style="margin-top: 8px;">Print: Monday, Wednesday, Friday</li>
-                    <li>Cursive: Tuesday, Thursday</li>
-                    <li style="margin-top: 8px;"><strong>Typing Club (15 min):</strong> Goal 30+ WPM</li>
+                    <li>USAHello reading modules or short articles</li>
+                    <li>Learn 5-10 vocabulary words daily (tied to subject topics)</li>
+                    <li>Create flashcards for key terms</li>
                 </ul>
             </div>
             
             <div class="section">
-                <h3>🌍 Language (2:45–3:15 PM)</h3>
-                <p><strong>Platform:</strong> Duolingo | <strong>Language:</strong> Spanish</p>
+                <h3>Typing Club (Integrated in Afternoon Sessions)</h3>
+                <p><strong>Goal:</strong> Build typing speed & accuracy for computer-based GED</p>
                 <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>15 minutes daily</li>
-                    <li>Ties to Communication Merit Badge</li>
+                    <li>20-30 minutes daily</li>
+                    <li>Focus: Accuracy first, then speed (target 40+ WPM)</li>
+                    <li>Practice GED-style essay responses</li>
                 </ul>
             </div>
             
             <div class="section">
-                <h3>🎹 Piano (3:30–4:00 PM)</h3>
-                <p><strong>Program:</strong> Simply Music</p>
+                <h3>Duolingo (3:30–3:50 PM, Optional Daily)</h3>
+                <p><strong>Language:</strong> Spanish | <strong>Duration:</strong> 15-20 minutes</p>
                 <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>30 minutes of daily practice</li>
-                    <li>Beginner level</li>
+                    <li>Optional reward/brain break</li>
+                    <li>Builds vocabulary & language skills</li>
                 </ul>
             </div>
         </div>
@@ -179,8 +232,18 @@
             <div id="vocabDisplay"></div>
         </div>
         
-        <!-- SCOUTS TAB -->
-        <div id="scouts" class="content">
+        <!-- GOALS TAB -->
+        <div id="goals" class="content">
+            <h2>Goals & Milestones</h2>
+            <div class="section">
+                <h3>Select Goal</h3>
+                <select id="goalSelect" onchange="displayGoal()"></select>
+            </div>
+            <div id="goalDisplay"></div>
+        </div>
+        
+        <!-- SCOUTING TAB -->
+        <div id="scouting" class="content">
             <h2>Merit Badges</h2>
             <div class="section">
                 <h3>Select Merit Badge</h3>
@@ -191,14 +254,22 @@
         
         <!-- MANAGE TAB -->
         <div id="manage" class="content">
-            <h2>Manage Books & Badges</h2>
+            <h2>Manage Books, Goals & Badges</h2>
             
             <div class="section">
                 <h3>Add New Book</h3>
                 <input type="text" id="bookNameInput" placeholder="Book Title">
-                <textarea id="bookVocabInput" placeholder="Word|Definition|Part&#10;Example: Courage|Bravery|noun" rows="5"></textarea>
+                <textarea id="bookVocabInput" placeholder="Word|Definition|Part&#10;Example: Photosynthesis|Process of converting light to energy|noun" rows="5"></textarea>
                 <button class="btn" onclick="addNewBook()">Add Book</button>
                 <div id="booksList" style="margin-top: 20px;"></div>
+            </div>
+            
+            <div class="section">
+                <h3>Add New Goal</h3>
+                <input type="text" id="goalNameInput" placeholder="Goal Name (e.g., Pass Math by March)">
+                <textarea id="goalReqsInput" placeholder="Milestone (one per line)&#10;Example: Complete algebra basics&#10;Example: Score 70%+ on practice tests" rows="4"></textarea>
+                <button class="btn" onclick="addNewGoal()">Add Goal</button>
+                <div id="goalsList" style="margin-top: 20px;"></div>
             </div>
             
             <div class="section">
@@ -214,27 +285,34 @@
     <div id="resetModal" class="modal">
         <div class="modal-content">
             <h3>Reset Week?</h3>
-            <p>This will clear all checkboxes and sync across devices.</p>
+            <p>This will clear all checkboxes for the week.</p>
             <button class="modal-btn modal-btn-cancel" onclick="closeResetModal()">Cancel</button>
             <button class="modal-btn modal-btn-confirm" onclick="doReset()">Reset</button>
         </div>
     </div>
 
     <script>
-        // Firebase Realtime Database URL
-        const FIREBASE_URL = 'https://schooling-dashboard-default-rtdb.firebaseio.com';
+        // Firebase Configuration
+        const FIREBASE_URL = 'https://your-firebase-project.firebaseio.com';
+        // Replace above with your actual Firebase Realtime Database URL
         
         let books = ["The Giver", "Holes"];
         let vocabData = [
-            [{w:"Apprehensive",d:"Anxious",p:"adj"},{w:"Precision",d:"Exactness",p:"noun"},{w:"Utopia",d:"Perfect society",p:"noun"},{w:"Serene",d:"Calm",p:"adj"},{w:"Remorse",d:"Deep regret",p:"noun"},{w:"Integrity",d:"Moral principles",p:"noun"},{w:"Empathy",d:"Understanding",p:"noun"},{w:"Anguish",d:"Severe pain",p:"noun"},{w:"Fugitive",d:"Escaping",p:"noun"},{w:"Obsolete",d:"No longer used",p:"adj"}],
-            [{w:"Parched",d:"Dry",p:"adj"},{w:"Perseverance",d:"Effort",p:"noun"},{w:"Desolate",d:"Empty",p:"adj"},{w:"Defiant",d:"Resistant",p:"adj"},{w:"Excavate",d:"Dig out",p:"verb"},{w:"Refuge",d:"Safety",p:"noun"},{w:"Futile",d:"Pointless",p:"adj"},{w:"Vast",d:"Great size",p:"adj"},{w:"Condemned",d:"Sentenced",p:"adj"},{w:"Resilient",d:"Quick recovery",p:"adj"}]
+            [{w:"Apprehensive",d:"Anxious or worried",p:"adj"},{w:"Precision",d:"Exactness and accuracy",p:"noun"},{w:"Utopia",d:"Perfect or ideal society",p:"noun"},{w:"Serene",d:"Calm and peaceful",p:"adj"},{w:"Remorse",d:"Deep regret or guilt",p:"noun"},{w:"Integrity",d:"Moral principles and honesty",p:"noun"},{w:"Empathy",d:"Understanding others' feelings",p:"noun"},{w:"Anguish",d:"Severe pain or suffering",p:"noun"},{w:"Fugitive",d:"Person escaping or fleeing",p:"noun"},{w:"Obsolete",d:"No longer in use",p:"adj"}],
+            [{w:"Parched",d:"Extremely dry",p:"adj"},{w:"Perseverance",d:"Persistent effort despite difficulty",p:"noun"},{w:"Desolate",d:"Empty and abandoned",p:"adj"},{w:"Defiant",d:"Boldly resistant",p:"adj"},{w:"Excavate",d:"Dig out or unearth",p:"verb"},{w:"Refuge",d:"Place of safety",p:"noun"},{w:"Futile",d:"Pointless or unsuccessful",p:"adj"},{w:"Vast",d:"Very great in size",p:"adj"},{w:"Condemned",d:"Sentenced or judged guilty",p:"adj"},{w:"Resilient",d:"Able to recover quickly",p:"adj"}]
+        ];
+        let goals = [
+            ["Pass Math Foundation by Dec 2025", ["Complete arithmetic basics", "Master fractions & decimals", "Score 70%+ on practice tests", "Move to algebra"]],
+            ["Complete Language Arts by Jan 2026", ["Practice essay writing", "Build typing speed to 40 WPM", "Master grammar concepts"]],
+            ["Achieve GED Readiness by April 2026", ["Score 145+ on practice tests", "Pass all four subject areas", "Complete GED preparation"]],
+            ["Take First GED Test by May 2026", ["Register at ged.com", "Choose first subject", "Review week before test"]]
         ];
         let badges = [
-            ["First Aid",["Learn CPR","Practice bandaging","Treat burns","Create emergency kit"]],
-            ["Camping",["Learn knots","Set up tent","Plan meals","Leave No Trace"]],
-            ["Citizenship",["Attend meeting","Service project","Study government"]],
-            ["Environmental",["Water cycle","Soil tests","Conservation project"]],
-            ["Fitness",["12-week plan","Track exercise","Nutrition study"]]
+            ["First Aid", ["Learn CPR", "Practice bandaging", "Treat burns", "Create emergency kit"]],
+            ["Camping", ["Learn knots", "Set up tent", "Plan meals", "Leave No Trace"]],
+            ["Citizenship", ["Attend meeting", "Service project", "Study government"]],
+            ["Environmental", ["Water cycle", "Soil tests", "Conservation project"]],
+            ["Fitness", ["12-week plan", "Track exercise", "Nutrition study"]]
         ];
 
         // UI Functions
@@ -256,6 +334,14 @@
             document.getElementById('vocabDisplay').innerHTML = html;
         }
 
+        function displayGoal() {
+            const idx = document.getElementById('goalSelect').value;
+            let html = '<div class="section"><h3>' + goals[idx][0] + '</h3><ul style="margin-left:20px;">';
+            goals[idx][1].forEach(r => html += '<li style="margin:8px 0;">' + r + '</li>');
+            html += '</ul></div>';
+            document.getElementById('goalDisplay').innerHTML = html;
+        }
+
         function displayBadge() {
             const idx = document.getElementById('badgeSelect').value;
             let html = '<div class="section"><h3>' + badges[idx][0] + '</h3><ul style="margin-left:20px;">';
@@ -269,6 +355,11 @@
             books.forEach((b, i) => html += '<option value="' + i + '">' + b + '</option>');
             document.getElementById('bookSelect').innerHTML = html;
             displayVocab();
+
+            html = '';
+            goals.forEach((g, i) => html += '<option value="' + i + '">' + g[0] + '</option>');
+            document.getElementById('goalSelect').innerHTML = html;
+            displayGoal();
 
             html = '';
             badges.forEach((b, i) => html += '<option value="' + i + '">' + b[0] + '</option>');
@@ -288,7 +379,7 @@
             if (words.length < 2) return alert('Add at least 2 vocabulary words');
             books.push(name);
             vocabData.push(words);
-            saveToFirebase();
+            saveToLocal();
             document.getElementById('bookNameInput').value = '';
             document.getElementById('bookVocabInput').value = '';
             updateSelects();
@@ -301,7 +392,32 @@
             if (confirm('Delete ' + books[idx] + '?')) {
                 books.splice(idx, 1);
                 vocabData.splice(idx, 1);
-                saveToFirebase();
+                saveToLocal();
+                updateSelects();
+                updateManageDisplay();
+            }
+        }
+
+        function addNewGoal() {
+            const name = document.getElementById('goalNameInput').value.trim();
+            const text = document.getElementById('goalReqsInput').value.trim();
+            if (!name || !text) return alert('Enter goal name and milestones');
+            const reqs = text.split('\n').filter(l => l.trim());
+            if (reqs.length < 1) return alert('Add at least 1 milestone');
+            goals.push([name, reqs]);
+            saveToLocal();
+            document.getElementById('goalNameInput').value = '';
+            document.getElementById('goalReqsInput').value = '';
+            updateSelects();
+            updateManageDisplay();
+            alert('Added ' + name);
+        }
+
+        function deleteGoal(idx) {
+            if (goals.length <= 1) return alert('Keep at least one goal');
+            if (confirm('Delete ' + goals[idx][0] + '?')) {
+                goals.splice(idx, 1);
+                saveToLocal();
                 updateSelects();
                 updateManageDisplay();
             }
@@ -314,7 +430,7 @@
             const reqs = text.split('\n').filter(l => l.trim());
             if (reqs.length < 1) return alert('Add at least 1 requirement');
             badges.push([name, reqs]);
-            saveToFirebase();
+            saveToLocal();
             document.getElementById('badgeNameInput').value = '';
             document.getElementById('badgeReqsInput').value = '';
             updateSelects();
@@ -326,7 +442,7 @@
             if (badges.length <= 1) return alert('Keep at least one badge');
             if (confirm('Delete ' + badges[idx][0] + '?')) {
                 badges.splice(idx, 1);
-                saveToFirebase();
+                saveToLocal();
                 updateSelects();
                 updateManageDisplay();
             }
@@ -338,6 +454,12 @@
                 html += '<div class="item-card"><div class="item-info"><h4>' + b + '</h4><p>' + vocabData[i].length + ' words</p></div><button class="btn-delete" onclick="deleteBook(' + i + ')">Delete</button></div>';
             });
             document.getElementById('booksList').innerHTML = html;
+
+            html = '';
+            goals.forEach((g, i) => {
+                html += '<div class="item-card"><div class="item-info"><h4>' + g[0] + '</h4><p>' + g[1].length + ' milestones</p></div><button class="btn-delete" onclick="deleteGoal(' + i + ')">Delete</button></div>';
+            });
+            document.getElementById('goalsList').innerHTML = html;
 
             html = '';
             badges.forEach((b, i) => {
@@ -360,16 +482,17 @@
             closeResetModal();
         }
 
-        // Firebase Functions
+        // Firebase & Local Storage Functions
         function saveCheckboxes() {
             const data = {};
             document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                 data[cb.id] = cb.checked;
             });
+            localStorage.setItem('mitchellCheckboxes', JSON.stringify(data));
             fetch(FIREBASE_URL + '/checks.json', {
                 method: 'PUT',
                 body: JSON.stringify(data)
-            }).catch(e => console.log('Save error:', e));
+            }).catch(e => console.log('Firebase save error:', e));
         }
 
         function loadCheckboxes() {
@@ -381,31 +504,74 @@
                             const el = document.getElementById(id);
                             if (el) el.checked = checked;
                         });
+                        localStorage.setItem('mitchellCheckboxes', JSON.stringify(data));
                     }
-                }).catch(e => console.log('Load error:', e));
+                })
+                .catch(e => {
+                    console.log('Firebase load error, using local storage:', e);
+                    const data = JSON.parse(localStorage.getItem('mitchellCheckboxes') || '{}');
+                    Object.entries(data).forEach(([id, checked]) => {
+                        const el = document.getElementById(id);
+                        if (el) el.checked = checked;
+                    });
+                });
         }
 
-        function saveToFirebase() {
-            fetch(FIREBASE_URL + '/books.json', { method: 'PUT', body: JSON.stringify(books) }).catch(e => {});
-            fetch(FIREBASE_URL + '/vocab.json', { method: 'PUT', body: JSON.stringify(vocabData) }).catch(e => {});
-            fetch(FIREBASE_URL + '/badges.json', { method: 'PUT', body: JSON.stringify(badges) }).catch(e => {});
+        function saveToLocal() {
+            localStorage.setItem('mitchellBooks', JSON.stringify(books));
+            localStorage.setItem('mitchellVocab', JSON.stringify(vocabData));
+            localStorage.setItem('mitchellGoals', JSON.stringify(goals));
+            localStorage.setItem('mitchellBadges', JSON.stringify(badges));
+            saveToFirebase();
         }
 
-        function loadFromFirebase() {
+        function loadFromLocal() {
             fetch(FIREBASE_URL + '/books.json')
                 .then(r => r.json())
                 .then(data => { if (data) books = data; updateSelects(); })
-                .catch(e => {});
-            
+                .catch(e => {
+                    console.log('Firebase load error for books, using local:', e);
+                    const b = localStorage.getItem('mitchellBooks');
+                    if (b) books = JSON.parse(b);
+                    updateSelects();
+                });
+
             fetch(FIREBASE_URL + '/vocab.json')
                 .then(r => r.json())
                 .then(data => { if (data) vocabData = data; displayVocab(); })
-                .catch(e => {});
-            
+                .catch(e => {
+                    console.log('Firebase load error for vocab, using local:', e);
+                    const v = localStorage.getItem('mitchellVocab');
+                    if (v) vocabData = JSON.parse(v);
+                    displayVocab();
+                });
+
+            fetch(FIREBASE_URL + '/goals.json')
+                .then(r => r.json())
+                .then(data => { if (data) goals = data; updateSelects(); })
+                .catch(e => {
+                    console.log('Firebase load error for goals, using local:', e);
+                    const g = localStorage.getItem('mitchellGoals');
+                    if (g) goals = JSON.parse(g);
+                    updateSelects();
+                });
+
             fetch(FIREBASE_URL + '/badges.json')
                 .then(r => r.json())
                 .then(data => { if (data) badges = data; updateSelects(); })
-                .catch(e => {});
+                .catch(e => {
+                    console.log('Firebase load error for badges, using local:', e);
+                    const ba = localStorage.getItem('mitchellBadges');
+                    if (ba) badges = JSON.parse(ba);
+                    updateSelects();
+                });
+        }
+
+        function saveToFirebase() {
+            fetch(FIREBASE_URL + '/books.json', { method: 'PUT', body: JSON.stringify(books) }).catch(e => console.log('Firebase save error:', e));
+            fetch(FIREBASE_URL + '/vocab.json', { method: 'PUT', body: JSON.stringify(vocabData) }).catch(e => console.log('Firebase save error:', e));
+            fetch(FIREBASE_URL + '/goals.json', { method: 'PUT', body: JSON.stringify(goals) }).catch(e => console.log('Firebase save error:', e));
+            fetch(FIREBASE_URL + '/badges.json', { method: 'PUT', body: JSON.stringify(badges) }).catch(e => console.log('Firebase save error:', e));
         }
 
         function checkConnection() {
@@ -415,7 +581,7 @@
                     document.getElementById('syncBadge').classList.add('online');
                 })
                 .catch(() => {
-                    document.getElementById('syncBadge').textContent = '⚠️ Offline';
+                    document.getElementById('syncBadge').textContent = '⚠️ Offline (Local)';
                     document.getElementById('syncBadge').classList.remove('online');
                 });
         }
@@ -423,11 +589,10 @@
         // Initialize
         window.addEventListener('load', () => {
             updateSelects();
-            loadFromFirebase();
+            loadFromLocal();
             loadCheckboxes();
             updateManageDisplay();
             checkConnection();
-            setInterval(checkConnection, 5000);
 
             document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                 cb.addEventListener('change', saveCheckboxes);

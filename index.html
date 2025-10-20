@@ -71,7 +71,8 @@
         
         <!-- SCHEDULE TAB -->
         <div id="schedule" class="content active">
-            <h2>Weekly Schedule & Progress</h2>
+            <h2>Daily Schedule & Progress</h2>
+            <p style="color: #666; margin-bottom: 15px;"><strong>9:30 AM – 4:00 PM</strong> (6.5 hours including breaks)</p>
             <button class="btn btn-danger" onclick="openResetModal()">🔄 Reset Week</button>
             
             <div class="section">
@@ -79,26 +80,14 @@
                 <div class="table-wrapper">
                 <table>
                     <tr><th>Time</th><th>Activity</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr>
-                    <tr><td>7:45</td><td>Stretch</td><td><input type="checkbox" id="s-mon"></td><td><input type="checkbox" id="s-tue"></td><td><input type="checkbox" id="s-wed"></td><td><input type="checkbox" id="s-thu"></td><td><input type="checkbox" id="s-fri"></td></tr>
-                    <tr><td>10:00</td><td>Math</td><td><input type="checkbox" id="m-mon"></td><td><input type="checkbox" id="m-tue"></td><td><input type="checkbox" id="m-wed"></td><td><input type="checkbox" id="m-thu"></td><td><input type="checkbox" id="m-fri"></td></tr>
-                    <tr><td>10:45</td><td>English</td><td><input type="checkbox" id="e-mon"></td><td><input type="checkbox" id="e-tue"></td><td><input type="checkbox" id="e-wed"></td><td><input type="checkbox" id="e-thu"></td><td><input type="checkbox" id="e-fri"></td></tr>
-                    <tr><td>11:30</td><td>Writing</td><td><input type="checkbox" id="h-mon"></td><td><input type="checkbox" id="h-tue"></td><td><input type="checkbox" id="h-wed"></td><td><input type="checkbox" id="h-thu"></td><td><input type="checkbox" id="h-fri"></td></tr>
-                    <tr><td>12:00</td><td>Language</td><td><input type="checkbox" id="l-mon"></td><td><input type="checkbox" id="l-tue"></td><td><input type="checkbox" id="l-wed"></td><td><input type="checkbox" id="l-thu"></td><td><input type="checkbox" id="l-fri"></td></tr>
-                    <tr><td>1:00</td><td>Science/History</td><td><input type="checkbox" id="sc-mon"></td><td><input type="checkbox" id="sc-tue"></td><td><input type="checkbox" id="sc-wed"></td><td><input type="checkbox" id="sc-thu"></td><td><input type="checkbox" id="sc-fri"></td></tr>
-                    <tr><td>2:00</td><td>Scouts</td><td><input type="checkbox" id="b-mon"></td><td><input type="checkbox" id="b-tue"></td><td><input type="checkbox" id="b-wed"></td><td><input type="checkbox" id="b-thu"></td><td><input type="checkbox" id="b-fri"></td></tr>
-                    <tr><td>3:00</td><td>Reading</td><td><input type="checkbox" id="r-mon"></td><td><input type="checkbox" id="r-tue"></td><td><input type="checkbox" id="r-wed"></td><td><input type="checkbox" id="r-thu"></td><td><input type="checkbox" id="r-fri"></td></tr>
-                    <tr><td>4:15</td><td>Boxing</td><td><input type="checkbox" id="bx-mon"></td><td><input type="checkbox" id="bx-tue"></td><td><input type="checkbox" id="bx-wed"></td><td><input type="checkbox" id="bx-thu"></td><td><input type="checkbox" id="bx-fri"></td></tr>
-                </table>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h3>Weekend Activities</h3>
-                <div class="table-wrapper">
-                <table>
-                    <tr><th>Time</th><th>Saturday</th><th></th><th>Sunday</th><th></th></tr>
-                    <tr><td>10:00</td><td>Piano</td><td><input type="checkbox" id="p-sat"></td><td>Flight School</td><td><input type="checkbox" id="f-sun"></td></tr>
-                    <tr><td>11:00</td><td>Scout Work</td><td><input type="checkbox" id="sb-sat"></td><td>Flight Sim</td><td><input type="checkbox" id="fs-sun"></td></tr>
+                    <tr><td>7:45–8:45</td><td>Exercise/Stretch</td><td><input type="checkbox" id="ex-mon"></td><td><input type="checkbox" id="ex-tue"></td><td><input type="checkbox" id="ex-wed"></td><td><input type="checkbox" id="ex-thu"></td><td><input type="checkbox" id="ex-fri"></td></tr>
+                    <tr><td>9:30–10:15</td><td>Math (Khan Academy)</td><td><input type="checkbox" id="m-mon"></td><td><input type="checkbox" id="m-tue"></td><td><input type="checkbox" id="m-wed"></td><td><input type="checkbox" id="m-thu"></td><td><input type="checkbox" id="m-fri"></td></tr>
+                    <tr><td>10:30–11:00</td><td>Science or History (Khan)</td><td><input type="checkbox" id="sh-mon"></td><td><input type="checkbox" id="sh-tue"></td><td><input type="checkbox" id="sh-wed"></td><td><input type="checkbox" id="sh-thu"></td><td><input type="checkbox" id="sh-fri"></td></tr>
+                    <tr><td>11:15–12:30</td><td>English (Khan Grammar)</td><td><input type="checkbox" id="e-mon"></td><td><input type="checkbox" id="e-tue"></td><td><input type="checkbox" id="e-wed"></td><td><input type="checkbox" id="e-thu"></td><td><input type="checkbox" id="e-fri"></td></tr>
+                    <tr><td>12:45–2:00</td><td>Reading & Vocabulary</td><td><input type="checkbox" id="rv-mon"></td><td><input type="checkbox" id="rv-tue"></td><td><input type="checkbox" id="rv-wed"></td><td><input type="checkbox" id="rv-thu"></td><td><input type="checkbox" id="rv-fri"></td></tr>
+                    <tr><td>2:00–2:30</td><td>Handwriting & Typing</td><td><input type="checkbox" id="ht-mon"></td><td><input type="checkbox" id="ht-tue"></td><td><input type="checkbox" id="ht-wed"></td><td><input type="checkbox" id="ht-thu"></td><td><input type="checkbox" id="ht-fri"></td></tr>
+                    <tr><td>2:45–3:15</td><td>Language (Duolingo)</td><td><input type="checkbox" id="l-mon"></td><td><input type="checkbox" id="l-tue"></td><td><input type="checkbox" id="l-wed"></td><td><input type="checkbox" id="l-thu"></td><td><input type="checkbox" id="l-fri"></td></tr>
+                    <tr><td>3:30–4:00</td><td>Piano (Simply Music)</td><td><input type="checkbox" id="p-mon"></td><td><input type="checkbox" id="p-tue"></td><td><input type="checkbox" id="p-wed"></td><td><input type="checkbox" id="p-thu"></td><td><input type="checkbox" id="p-fri"></td></tr>
                 </table>
                 </div>
             </div>
@@ -107,52 +96,75 @@
         <!-- CURRICULUM TAB -->
         <div id="curriculum" class="content">
             <h2>Curriculum Overview</h2>
+            <p style="color: #666; margin-bottom: 20px;"><strong>Daily Schedule:</strong> 9:30 AM – 4:00 PM (6.5 hours including breaks)</p>
+            
             <div class="section">
-                <h3>📐 Mathematics (10:00-10:45 AM)</h3>
+                <h3>📐 Mathematics (9:30–10:15 AM)</h3>
+                <p><strong>Platform:</strong> Khan Academy | <strong>Level:</strong> 5th Grade</p>
+                <p><strong>Focus:</strong> Fractions, decimals, word problems, addressing learning gaps</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Complete 3–4 exercises per session</li>
+                    <li>Mom reviews progress daily</li>
+                    <li>Focus on word problems and real-world applications</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h3>🔬 Science & 📜 History (10:30–11:00 AM, Alternate Days)</h3>
                 <p><strong>Platform:</strong> Khan Academy | <strong>Level:</strong> 5th Grade</p>
                 <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>Fractions, decimals, percentages</li>
-                    <li>Word problems and multi-step equations</li>
-                    <li>Geometry basics (area, perimeter, volume)</li>
+                    <li><strong>Science (Mon/Wed/Fri):</strong> Ecosystems, matter & energy, Earth systems</li>
+                    <li><strong>History (Tue/Thu):</strong> U.S. government, geography, economics</li>
+                    <li>Complete 2–3 videos/exercises per session</li>
                 </ul>
             </div>
+            
             <div class="section">
-                <h3>📝 English (10:45-11:30 AM)</h3>
-                <p><strong>Reading Level:</strong> 7-8th Grade</p>
+                <h3>📝 English (11:15 AM–12:30 PM)</h3>
+                <p><strong>Platform:</strong> Khan Academy</p>
                 <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>Daily reading: 1-2 chapters from current book</li>
-                    <li>Vocabulary: 5-7 new words per day</li>
-                    <li>Grammar practice via Khan Academy</li>
+                    <li>Grammar practice and instruction</li>
+                    <li>Writing exercises</li>
+                    <li>Language arts skills development</li>
                 </ul>
             </div>
+            
             <div class="section">
-                <h3>✍️ Handwriting & Typing (11:30-12:00 PM)</h3>
-                <ul style="margin-left: 20px;">
-                    <li>Handwriting: Print (Mon/Wed/Fri), Cursive (Tue/Thu)</li>
-                    <li>Typing Club: Goal 30+ WPM</li>
-                </ul>
-            </div>
-            <div class="section">
-                <h3>🔬 Science & 📜 History (1:00-2:00 PM)</h3>
-                <p><strong>Platform:</strong> Khan Academy (Alternate days)</p>
+                <h3>📚 Reading & Vocabulary (12:45–2:00 PM)</h3>
+                <p><strong>Current Book:</strong> The Giver</p>
                 <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>Science: Ecosystems, Matter & Energy, Earth Systems</li>
-                    <li>History: U.S. Government, Geography, Economics</li>
+                    <li>Read 20 minutes daily</li>
+                    <li>Work on 5–7 vocabulary words daily</li>
+                    <li>Activities: guess meanings, write sentences, maintain vocabulary notebook</li>
+                    <li><strong>Weekly Quiz:</strong> Write a short story using 10 vocabulary words</li>
                 </ul>
             </div>
+            
             <div class="section">
-                <h3>⚜️ Boy Scout Merit Badges (2:00-3:00 PM)</h3>
-                <p><strong>Goal:</strong> Complete 2-3 badges this quarter</p>
+                <h3>✍️ Handwriting & Typing (2:00–2:30 PM)</h3>
                 <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>First Aid, Camping, Citizenship</li>
-                    <li>Environmental Science, Personal Fitness</li>
+                    <li><strong>Handwriting (15 min):</strong> Copy passages from books</li>
+                    <li style="margin-top: 8px;">Print: Monday, Wednesday, Friday</li>
+                    <li>Cursive: Tuesday, Thursday</li>
+                    <li style="margin-top: 8px;"><strong>Typing Club (15 min):</strong> Goal 30+ WPM</li>
                 </ul>
             </div>
+            
             <div class="section">
-                <h3>🎹 Piano & ✈️ Flight School (Weekends)</h3>
-                <ul style="margin-left: 20px;">
-                    <li>Saturday: Piano lessons (beginner level)</li>
-                    <li>Sunday: Flight book study + simulator practice</li>
+                <h3>🌍 Language (2:45–3:15 PM)</h3>
+                <p><strong>Platform:</strong> Duolingo | <strong>Language:</strong> Spanish</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>15 minutes daily</li>
+                    <li>Ties to Communication Merit Badge</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h3>🎹 Piano (3:30–4:00 PM)</h3>
+                <p><strong>Program:</strong> Simply Music</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>30 minutes of daily practice</li>
+                    <li>Beginner level</li>
                 </ul>
             </div>
         </div>

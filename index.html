@@ -115,13 +115,17 @@
     }
 
     function copyAndOpen(phrase) {
-        // Copies to clipboard
-        const el = document.createElement('textarea');
-        el.value = phrase;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
+        // Fallback copy method for all browsers
+        const textArea = document.createElement("textarea");
+        textArea.value = phrase;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+        } catch (err) {
+            console.error('Copy failed', err);
+        }
+        document.body.removeChild(textArea);
         
         // Opens Learn About
         window.open("https://learning.google.com/experiments/learn-about", "_blank");

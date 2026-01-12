@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mitchell's GED Tracker</title>
+    <title>Mitchell's GED Tracker + Learn About</title>
     <style>
         :root { 
             --math: #4a90e2; --rla: #ff5e62; --sci: #27ae60; --ss: #f39c12; 
@@ -11,83 +11,61 @@
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            font-family: -apple-system, sans-serif; 
-            background: var(--bg); 
-            margin: 0; 
-            padding-bottom: 40px;
-            transition: background 0.4s ease;
-        }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding-bottom: 40px; }
 
-        /* Dynamic Status Header */
         .status-header {
             background: #fff; padding: 25px 20px; text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px;
-            transition: border-top 0.4s ease;
-            border-top: 8px solid var(--math); 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px;
         }
-        
         .progress-outer { 
-            background: #eee; border-radius: 10px; height: 16px; 
+            background: #eee; border-radius: 10px; height: 14px; 
             margin: 10px auto; max-width: 400px; overflow: hidden;
         }
-        
-        .bar { 
-            background: var(--math); 
-            height: 100%; width: 0%; 
-            transition: width 0.5s ease, background 0.4s ease; 
-        }
-        
-        #stat-text { font-weight: 800; color: #444; font-size: 1rem; margin-top: 5px; }
+        .bar { background: #2ecc71; height: 100%; width: 0%; transition: 0.5s ease; }
+        #stat-text { font-weight: bold; color: #555; font-size: 0.9rem; }
 
-        /* Subject Buttons Grid */
         .button-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
             padding: 0 15px; max-width: 600px; margin: 0 auto 25px;
         }
-        
         .sub-btn {
-            padding: 18px; border: none; border-radius: 15px; color: white;
-            font-weight: 800; font-size: 0.9rem; cursor: pointer; opacity: 0.4;
-            transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            letter-spacing: 1px;
+            padding: 15px; border: none; border-radius: 12px; color: white;
+            font-weight: bold; font-size: 0.9rem; cursor: pointer; opacity: 0.6;
+            transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        
-        .sub-btn.active { opacity: 1; transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.2); }
+        .sub-btn.active { opacity: 1; transform: translateY(-2px); }
         
         .btn-math { background: var(--math); }
         .btn-rla { background: var(--rla); }
         .btn-sci { background: var(--sci); }
         .btn-ss { background: var(--ss); }
 
-        /* Lesson Checklist */
         .container { max-width: 600px; margin: 0 auto; padding: 0 15px; }
         .content { display: none; }
-        .content.active { display: block; animation: fadeIn 0.4s ease; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .content.active { display: block; }
 
         .lesson-card { 
-            background: white; margin-bottom: 12px; padding: 20px; 
-            border-radius: 18px; display: flex; align-items: center; gap: 15px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer;
-            transition: 0.2s;
-            border-left: 5px solid transparent;
+            background: white; margin-bottom: 10px; padding: 12px 18px; 
+            border-radius: 15px; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
+        .lesson-info { display: flex; align-items: center; gap: 15px; flex-grow: 1; cursor: pointer; }
+        .lesson-card input { width: 22px; height: 22px; pointer-events: none; }
+        .lesson-card span { font-weight: 600; color: #333; font-size: 0.95rem; }
         
-        .lesson-card.active-math { border-left-color: var(--math); }
-        .lesson-card.active-rla { border-left-color: var(--rla); }
-        .lesson-card.active-sci { border-left-color: var(--sci); }
-        .lesson-card.active-ss { border-left-color: var(--ss); }
-
-        .lesson-card input { width: 24px; height: 24px; pointer-events: none; }
-        .lesson-card span { font-weight: 600; color: #333; font-size: 1rem; line-height: 1.3; }
+        /* Learn About Button */
+        .learn-link {
+            background: #eef2f3; padding: 10px; border-radius: 10px;
+            text-decoration: none; font-size: 1.2rem; transition: 0.2s;
+            margin-left: 10px; display: flex; align-items: center;
+        }
+        .learn-link:hover { background: #d1d8db; }
     </style>
 </head>
 <body>
 
-<div id="header-top" class="status-header">
-    <h2 id="display-title" style="margin:0 0 5px 0; color: #333;">Mitchell's Progress</h2>
+<div class="status-header">
+    <h2 id="display-title" style="margin:0 0 5px 0; color: #333;">Mitchell's GED Progress</h2>
     <div class="progress-outer"><div id="p-bar" class="bar"></div></div>
     <div id="stat-text">0% Complete</div>
 </div>
@@ -109,59 +87,59 @@
 <script>
     const dataSet = {
         math: [
-            "Lesson 1: Whole Numbers", "Lesson 2: Fractions: Adding & Subtracting", "Lesson 3: Decimals", 
-            "Lesson 4: Multiplication", "Lesson 5: Division", "Lesson 6: Factors and Multiples", 
-            "Lesson 7: Using Denominators and Converting Fractions", "Lesson 8: Like and Unlike Terms", 
-            "Lesson 9: Order of Operations", "Lesson 10: Factoring and Solving Equations", "Lesson 11: Absolute Value", 
-            "Lesson 12: Multiplying and Dividing Fractions", "Lesson 13: Exponents", "Lesson 14: Exponent Rules", 
-            "Lesson 15: Squares & Square Roots", "Lesson 16: Cubes, Cube Roots, and Volume", "Lesson 17: Functions and Slopes", 
-            "Lesson 18: Rates and Unit Rates", "Lesson 19: Proportions and Ratios", "Lesson 20: Review Multi–step Word Problems and Inequalities", 
-            "Lesson 21: Math Test Prep", "Lesson 22: Congratulations"
+            "Whole Numbers", "Fractions: Adding & Subtracting", "Decimals", 
+            "Multiplication", "Division", "Factors and Multiples", 
+            "Denominators and Converting Fractions", "Like and Unlike Terms", 
+            "Order of Operations", "Factoring and Solving Equations", "Absolute Value", 
+            "Multiplying and Dividing Fractions", "Exponents", "Exponent Rules", 
+            "Squares & Square Roots", "Cubes and Cube Roots", "Functions and Slopes", 
+            "Rates and Unit Rates", "Proportions and Ratios", "Word Problems and Inequalities"
         ],
         rla: [
-            "Lesson 1: Vocabulary Questions", "Lesson 2: Analyzing Text", "Lesson 3: Identifying Themes & Main Ideas", 
-            "Lesson 4: Parts Of The Text", "Lesson 5: Expressing/Influencing Opinions", "Lesson 6: Sequence/Cause & Effect", 
-            "Lesson 7: Evidence and Explanation", "Lesson 8: Verb Tenses", "Lesson 9: Run-ons & Fragments", 
-            "Lesson 10: Capitalization", "Lesson 11: Punctuation", "Lesson 12: Getting Ready to Write", 
-            "Lesson 13: Writing the Parts of an Essay", "Lesson 14: Transition Words", 
-            "Lesson 15: Points of View", "Lesson 16: Final Practice Quiz", "Lesson 17: Congratulations!"
+            "Vocabulary Questions", "Analyzing Text", "Identifying Themes & Main Ideas", 
+            "Parts Of The Text", "Expressing Opinions", "Cause & Effect", 
+            "Evidence and Explanation", "Verb Tenses", "Run-ons & Fragments", 
+            "Capitalization", "Punctuation", "Writing the Parts of an Essay"
         ],
         sci: [
-            "Lesson 1: Scientific Method", "Lesson 2: Using Data", "Lesson 3: Using Statistics", 
-            "Lesson 4: Understanding Cells", "Lesson 5: Human Biology", "Lesson 6: DNA & Heredity", 
-            "Lesson 7: Evolution", "Lesson 8: Ecology", "Lesson 9: Ecosystems", "Lesson 10: Geology", 
-            "Lesson 11: Earth’s Atmosphere", "Lesson 12: Earth in Solar System", "Lesson 13: Atoms & Molecules", 
-            "Lesson 14: Changes & Reactions", "Lesson 15: Symbols & Equations", "Lesson 16: Motion & Forces", 
-            "Lesson 17: Energy & Work", "Lesson 18: Units & Formulas", "Lesson 19: Final Science Practice", 
-            "Lesson 20: Congratulations"
+            "Scientific Method", "Using Data", "Using Statistics", 
+            "Understanding Cells", "Human Biology", "DNA & Heredity", 
+            "Evolution", "Ecology", "Ecosystems", "Geology", 
+            "Earth’s Atmosphere", "Earth in Solar System", "Atoms & Molecules", 
+            "Chemical Changes & Reactions", "Symbols & Equations", "Motion & Forces", 
+            "Energy & Work", "Units & Formulas"
         ],
         ss: [
-            "Lesson 1: Reading Charts & Graphs", "Lesson 2: Early American History", "Lesson 3: American Revolution", 
-            "Lesson 4: Civil War", "Lesson 5: Progressive Era & WW1", "Lesson 6: Great Depression & WW2", 
-            "Lesson 7: Civil Rights Movement", "Lesson 8: Cold War & Modern World", "Lesson 9: Ancient Civilizations", 
-            "Lesson 10: Human Migration", "Lesson 11: National Borders", "Lesson 12: People & Environment", 
-            "Lesson 13: US Government", "Lesson 14: Citizenship", "Lesson 15: Types of Government", 
-            "Lesson 16: Political Parties", "Lesson 17: Economic Revolutions", "Lesson 18: Taxes", 
-            "Lesson 19: Final Test Prep", "Lesson 20: Congratulations"
+            "Reading Charts & Graphs", "Early American History", "American Revolution", 
+            "US Civil War", "Progressive Era & WW1", "Great Depression & WW2", 
+            "Civil Rights Movement", "Cold War", "Ancient Civilizations", 
+            "Human Migration", "National Borders", "US Government", 
+            "US Citizenship", "Types of Government", "Political Parties", "Taxes"
         ]
     };
 
     let activeSub = 'math';
-    const colors = { math: '#4a90e2', rla: '#ff5e62', sci: '#27ae60', ss: '#f39c12' };
 
     function init() {
         Object.keys(dataSet).forEach(sub => {
             const list = document.getElementById(sub + '-list');
-            const saved = JSON.parse(localStorage.getItem('mitch_btn_' + sub)) || {};
+            const saved = JSON.parse(localStorage.getItem('mitch_learn_' + sub)) || {};
             
             dataSet[sub].forEach((text, i) => {
                 const id = `mitch_${sub}_${i}`;
                 const card = document.createElement('div');
-                card.className = `lesson-card active-${sub}`;
-                card.onclick = () => toggle(id);
+                card.className = 'lesson-card';
+                
+                // Learn About URL Generator
+                const query = encodeURIComponent(`GED ${sub} ${text}`);
+                const learnUrl = `https://learning.google.com/learnabout/search?q=${query}`;
+
                 card.innerHTML = `
-                    <input type="checkbox" id="${id}" ${saved[id] ? 'checked' : ''}>
-                    <span>${text}</span>
+                    <div class="lesson-info" onclick="toggle('${id}')">
+                        <input type="checkbox" id="${id}" ${saved[id] ? 'checked' : ''}>
+                        <span>Lesson ${i+1}: ${text}</span>
+                    </div>
+                    <a href="${learnUrl}" target="_blank" class="learn-link" title="Open in Learn About">📖</a>
                 `;
                 list.appendChild(card);
             });
@@ -175,13 +153,6 @@
         document.getElementById(sub + '-list').classList.add('active');
         document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('btn-' + sub).classList.add('active');
-        
-        const header = document.getElementById('header-top');
-        const progressBar = document.getElementById('p-bar');
-        
-        header.style.borderTopColor = colors[sub];
-        progressBar.style.backgroundColor = colors[sub];
-        
         updateUI();
     }
 
@@ -196,7 +167,7 @@
         document.querySelectorAll(`#${activeSub}-list input`).forEach(cb => {
             data[cb.id] = cb.checked;
         });
-        localStorage.setItem('mitch_btn_' + activeSub, JSON.stringify(data));
+        localStorage.setItem('mitch_learn_' + activeSub, JSON.stringify(data));
         updateUI();
     }
 
@@ -205,14 +176,11 @@
         const total = currentList.querySelectorAll('input').length;
         const checked = currentList.querySelectorAll('input:checked').length;
         const pct = Math.round((checked / total) * 100) || 0;
-        
         document.getElementById('p-bar').style.width = pct + '%';
-        const displayNames = {math:'Math', rla:'RLA', sci:'Science', ss:'Social Studies'};
-        document.getElementById('stat-text').innerText = `Mitchell's ${displayNames[activeSub]}: ${checked}/${total} (${pct}%)`;
+        document.getElementById('stat-text').innerText = `${activeSub.toUpperCase()}: ${checked}/${total} Lessons (${pct}%)`;
     }
 
     init();
 </script>
-
 </body>
 </html>

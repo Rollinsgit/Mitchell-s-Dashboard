@@ -3,203 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mitchell's GED Master Hub</title>
+    <title>Mitchell's GED Tracker</title>
     <style>
-        :root { --math: #667eea; --rla: #ff5e62; --sci: #27ae60; --ss: #f39c12; --bg: #f4f7f6; --success: #2ecc71; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
-        body { background: var(--bg); color: #333; padding-bottom: 60px; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
-        .hero { background: var(--math); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin-bottom: 30px; transition: 0.5s; }
-        .progress-container { margin: 20px auto 0; background: rgba(255,255,255,0.2); border-radius: 20px; height: 14px; overflow: hidden; max-width: 600px; }
-        #progress-bar { background: #fff; width: 0%; height: 100%; transition: width 0.5s; opacity: 0.9; }
-        .tabs { display: flex; overflow-x: auto; gap: 8px; margin-top: -25px; margin-bottom: 20px; padding: 5px; scrollbar-width: none; justify-content: center; }
-        .tab-btn { padding: 10px 18px; border: none; border-radius: 12px; background: white; font-weight: bold; color: #888; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); white-space: nowrap; font-size: 0.8rem; }
-        .tab-btn.active { color: white; }
-        .active-math { background: var(--math) !important; }
-        .active-rla { background: var(--rla) !important; }
-        .active-sci { background: var(--sci) !important; }
-        .active-ss { background: var(--ss) !important; }
-        .module-grid { display: none; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 768px) { .module-grid { grid-template-columns: 1fr 1fr; } }
-        .active-grid { display: grid; }
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); height: fit-content; }
-        .module-title { font-size: 1.1rem; margin-bottom: 15px; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
-        .lesson-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f9f9f9; }
-        .lesson-info h4 { font-size: 0.85rem; font-weight: 600; }
-        input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: var(--success); }
+        :root { 
+            --math: #4a90e2; --rla: #ff5e62; --sci: #27ae60; --ss: #f39c12; 
+            --bg: #f4f7f6;
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding-bottom: 40px; }
+
+        /* Status Header */
+        .status-header {
+            background: #fff; padding: 25px 20px; text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px;
+        }
+        .progress-outer { 
+            background: #eee; border-radius: 10px; height: 14px; 
+            margin: 10px auto; max-width: 400px; overflow: hidden;
+        }
+        .bar { background: #2ecc71; height: 100%; width: 0%; transition: 0.5s ease; }
+        #stat-text { font-weight: bold; color: #555; font-size: 0.9rem; }
+
+        /* Subject Buttons Grid */
+        .button-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            padding: 0 15px; max-width: 600px; margin: 0 auto 25px;
+        }
+        .sub-btn {
+            padding: 15px; border: none; border-radius: 12px; color: white;
+            font-weight: bold; font-size: 0.9rem; cursor: pointer; opacity: 0.6;
+            transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .sub-btn.active { opacity: 1; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+        
+        .btn-math { background: var(--math); }
+        .btn-rla { background: var(--rla); }
+        .btn-sci { background: var(--sci); }
+        .btn-ss { background: var(--ss); }
+
+        /* Lesson Checklist */
+        .container { max-width: 600px; margin: 0 auto; padding: 0 15px; }
+        .content { display: none; }
+        .content.active { display: block; }
+
+        .lesson-card { 
+            background: white; margin-bottom: 10px; padding: 18px; 
+            border-radius: 15px; display: flex; align-items: center; gap: 15px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer;
+        }
+        .lesson-card input { width: 22px; height: 22px; pointer-events: none; }
+        .lesson-card span { font-weight: 600; color: #333; font-size: 0.95rem; line-height: 1.3; }
     </style>
 </head>
 <body>
-    <div class="hero" id="header">
-        <div class="container">
-            <h1 id="mainTitle">Mitchell's Math Mission</h1>
-            <div class="progress-container"><div id="progress-bar"></div></div>
-            <p style="font-size: 0.9rem; margin-top: 10px;"><span id="done-count">0</span> Lessons Complete</p>
-        </div>
-    </div>
-    <div class="tabs">
-        <button class="tab-btn active active-math" id="mathBtn" onclick="switchSubject('math')">MATH</button>
-        <button class="tab-btn" id="rlaBtn" onclick="switchSubject('rla')">RLA</button>
-        <button class="tab-btn" id="sciBtn" onclick="switchSubject('sci')">SCIENCE</button>
-        <button class="tab-btn" id="ssBtn" onclick="switchSubject('ss')">SOC STUDIES</button>
-    </div>
-    <div class="container">
-        <div id="mathGrid" class="module-grid active-grid">
-            <div class="card">
-                <h3 class="module-title" style="color:var(--math)">1. Number Sense</h3>
-                <div class="lesson-row"><h4>Place Value</h4><input type="checkbox" id="m1" class="ged-check"></div>
-                <div class="lesson-row"><h4>Rounding & Estimates</h4><input type="checkbox" id="m2" class="ged-check"></div>
-                <div class="lesson-row"><h4>Fractions +/-</h4><input type="checkbox" id="m3" class="ged-check"></div>
-                <div class="lesson-row"><h4>Fractions x/÷</h4><input type="checkbox" id="m4" class="ged-check"></div>
-                <div class="lesson-row"><h4>Decimals</h4><input type="checkbox" id="m5" class="ged-check"></div>
-                <div class="lesson-row"><h4>Percents</h4><input type="checkbox" id="m6" class="ged-check"></div>
-                <div class="lesson-row"><h4>Ratios & Proportions</h4><input type="checkbox" id="m7" class="ged-check"></div>
-            </div>
-            <div class="card">
-                <h3 class="module-title" style="color:var(--math)">2. Geometry & Measurement</h3>
-                <div class="lesson-row"><h4>Perimeter & Area</h4><input type="checkbox" id="m8" class="ged-check"></div>
-                <div class="lesson-row"><h4>Circles (Area/Circ)</h4><input type="checkbox" id="m9" class="ged-check"></div>
-                <div class="lesson-row"><h4>Pythagorean Theorem</h4><input type="checkbox" id="m10" class="ged-check"></div>
-                <div class="lesson-row"><h4>Volume</h4><input type="checkbox" id="m11" class="ged-check"></div>
-                <div class="lesson-row"><h4>Surface Area</h4><input type="checkbox" id="m12" class="ged-check"></div>
-            </div>
-            <div class="card">
-                <h3 class="module-title" style="color:var(--math)">3. Algebra</h3>
-                <div class="lesson-row"><h4>Variables & Expressions</h4><input type="checkbox" id="m13" class="ged-check"></div>
-                <div class="lesson-row"><h4>Solving 1-Step Eq.</h4><input type="checkbox" id="m14" class="ged-check"></div>
-                <div class="lesson-row"><h4>Multi-Step Equations</h4><input type="checkbox" id="m15" class="ged-check"></div>
-                <div class="lesson-row"><h4>Inequalities</h4><input type="checkbox" id="m16" class="ged-check"></div>
-                <div class="lesson-row"><h4>Polynomials</h4><input type="checkbox" id="m17" class="ged-check"></div>
-                <div class="lesson-row"><h4>Factoring</h4><input type="checkbox" id="m18" class="ged-check"></div>
-            </div>
-            <div class="card">
-                <h3 class="module-title" style="color:var(--math)">4. Graphs & Functions</h3>
-                <div class="lesson-row"><h4>Coordinate Plane</h4><input type="checkbox" id="m19" class="ged-check"></div>
-                <div class="lesson-row"><h4>Slope of a Line</h4><input type="checkbox" id="m20" class="ged-check"></div>
-                <div class="lesson-row"><h4>Equation of a Line</h4><input type="checkbox" id="m21" class="ged-check"></div>
-                <div class="lesson-row"><h4>Functions</h4><input type="checkbox" id="m22" class="ged-check"></div>
-                <div class="lesson-row"><h4>Data, Stats, Probability</h4><input type="checkbox" id="m23" class="ged-check"></div>
-                <div class="lesson-row"><h4>Mean, Median, Mode</h4><input type="checkbox" id="m24" class="ged-check"></div>
-            </div>
-        </div>
-        <div id="rlaGrid" class="module-grid">
-            <div class="card">
-                <h3 class="module-title" style="color:var(--rla)">1. Reading Comprehension</h3>
-                <div class="lesson-row"><h4>Main Idea & Details</h4><input type="checkbox" id="r1" class="ged-check"></div>
-                <div class="lesson-row"><h4>Context Clues</h4><input type="checkbox" id="r2" class="ged-check"></div>
-                <div class="lesson-row"><h4>Inferences & Conclusions</h4><input type="checkbox" id="r3" class="ged-check"></div>
-                <div class="lesson-row"><h4>Author's Purpose</h4><input type="checkbox" id="r4" class="ged-check"></div>
-                <div class="lesson-row"><h4>Tone & Mood</h4><input type="checkbox" id="r5" class="ged-check"></div>
-                <div class="lesson-row"><h4>Comparing Texts</h4><input type="checkbox" id="r6" class="ged-check"></div>
-                <div class="lesson-row"><h4>Evidence-Based Reading</h4><input type="checkbox" id="r7" class="ged-check"></div>
-            </div>
-            <div class="card">
-                <h3 class="module-title" style="color:var(--rla)">2. Writing & Grammar</h3>
-                <div class="lesson-row"><h4>Sentence Structure</h4><input type="checkbox" id="r8" class="ged-check"></div>
-                <div class="lesson-row"><h4>Punctuation & Capitalization</h4><input type="checkbox" id="r9" class="ged-check"></div>
-                <div class="lesson-row"><h4>Grammar Usage</h4><input type="checkbox" id="r10" class="ged-check"></div>
-                <div class="lesson-row"><h4>The Extended Response</h4><input type="checkbox" id="r11" class="ged-check"></div>
-                <div class="lesson-row"><h4>Drafting the Essay</h4><input type="checkbox" id="r12" class="ged-check"></div>
-                <div class="lesson-row"><h4>Revising & Editing</h4><input type="checkbox" id="r13" class="ged-check"></div>
-            </div>
-        </div>
-        <div id="sciGrid" class="module-grid">
-            <div class="card">
-                <h3 class="module-title" style="color:var(--sci)">1. Life Science</h3>
-                <div class="lesson-row"><h4>Cell Structures</h4><input type="checkbox" id="s1" class="ged-check"></div>
-                <div class="lesson-row"><h4>Cell Functions</h4><input type="checkbox" id="s2" class="ged-check"></div>
-                <div class="lesson-row"><h4>Genetics & Heredity</h4><input type="checkbox" id="s3" class="ged-check"></div>
-                <div class="lesson-row"><h4>DNA & RNA</h4><input type="checkbox" id="s4" class="ged-check"></div>
-                <div class="lesson-row"><h4>Punnett Squares</h4><input type="checkbox" id="s5" class="ged-check"></div>
-                <div class="lesson-row"><h4>Evolution & Natural Selection</h4><input type="checkbox" id="s6" class="ged-check"></div>
-                <div class="lesson-row"><h4>Human Body Systems</h4><input type="checkbox" id="s7" class="ged-check"></div>
-                <div class="lesson-row"><h4>Ecosystems & Energy Flow</h4><input type="checkbox" id="s8" class="ged-check"></div>
-            </div>
-            <div class="card">
-                <h3 class="module-title" style="color:var(--sci)">2. Physical & Earth Science</h3>
-                <div class="lesson-row"><h4>Atomic Structure</h4><input type="checkbox" id="s9" class="ged-check"></div>
-                <div class="lesson-row"><h4>Chemical Reactions</h4><input type="checkbox" id="s10" class="ged-check"></div>
-                <div class="lesson-row"><h4>Force, Motion, Energy</h4><input type="checkbox" id="s11" class="ged-check"></div>
-                <div class="lesson-row"><h4>Earth's Systems</h4><input type="checkbox" id="s12" class="ged-check"></div>
-                <div class="lesson-row"><h4>Space & The Universe</h4><input type="checkbox" id="s13" class="ged-check"></div>
-                <div class="lesson-row"><h4>Scientific Method</h4><input type="checkbox" id="s14" class="ged-check"></div>
-                <div class="lesson-row"><h4>Experimental Design</h4><input type="checkbox" id="s15" class="ged-check"></div>
-                <div class="lesson-row"><h4>Interpreting Data</h4><input type="checkbox" id="s16" class="ged-check"></div>
-            </div>
-        </div>
-        <div id="ssGrid" class="module-grid">
-            <div class="card">
-                <h3 class="module-title" style="color:var(--ss)">1. Civics & Government</h3>
-                <div class="lesson-row"><h4>Types of Government</h4><input type="checkbox" id="ss1" class="ged-check"></div>
-                <div class="lesson-row"><h4>Historical Documents</h4><input type="checkbox" id="ss2" class="ged-check"></div>
-                <div class="lesson-row"><h4>The Constitution</h4><input type="checkbox" id="ss3" class="ged-check"></div>
-                <div class="lesson-row"><h4>Bill of Rights</h4><input type="checkbox" id="ss4" class="ged-check"></div>
-                <div class="lesson-row"><h4>The Three Branches</h4><input type="checkbox" id="ss5" class="ged-check"></div>
-                <div class="lesson-row"><h4>Elections & Political Parties</h4><input type="checkbox" id="ss6" class="ged-check"></div>
-                <div class="lesson-row"><h4>Citizenship & Rights</h4><input type="checkbox" id="ss7" class="ged-check"></div>
-            </div>
-            <div class="card">
-                <h3 class="module-title" style="color:var(--ss)">2. History & Economics</h3>
-                <div class="lesson-row"><h4>US History: 1776-1877</h4><input type="checkbox" id="ss8" class="ged-check"></div>
-                <div class="lesson-row"><h4>US History: 1877-Present</h4><input type="checkbox" id="ss9" class="ged-check"></div>
-                <div class="lesson-row"><h4>World Wars</h4><input type="checkbox" id="ss10" class="ged-check"></div>
-                <div class="lesson-row"><h4>Cold War Era</h4><input type="checkbox" id="ss11" class="ged-check"></div>
-                <div class="lesson-row"><h4>Basic Economics</h4><input type="checkbox" id="ss12" class="ged-check"></div>
-                <div class="lesson-row"><h4>Supply & Demand</h4><input type="checkbox" id="ss13" class="ged-check"></div>
-                <div class="lesson-row"><h4>Global Geography</h4><input type="checkbox" id="ss14" class="ged-check"></div>
-            </div>
-        </div>
-    </div>
-    <script>
-        // CRITICAL: Pointing to Mitchell's specific cloud file
-        const FIREBASE_URL = 'https://schooling-dashboard-default-rtdb.firebaseio.com';
-        const CLOUD_FILE = '/mitchell_sync.json';
 
-        function switchSubject(type) {
-            document.querySelectorAll('.module-grid').forEach(g => g.classList.remove('active-grid'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.className = 'tab-btn');
-            const h = document.getElementById('header');
-            const t = document.getElementById('mainTitle');
-            if(type==='math'){
-                document.getElementById('mathGrid').classList.add('active-grid');
-                document.getElementById('mathBtn').className='tab-btn active active-math';
-                h.style.background='var(--math)'; t.innerText="Mitchell's Math Mission";
-            } else if(type==='rla'){
-                document.getElementById('rlaGrid').classList.add('active-grid');
-                document.getElementById('rlaBtn').className='tab-btn active active-rla';
-                h.style.background='var(--rla)'; t.innerText="Mitchell's RLA Mastery";
-            } else if(type==='sci'){
-                document.getElementById('sciGrid').classList.add('active-grid');
-                document.getElementById('sciBtn').className='tab-btn active active-sci';
-                h.style.background='var(--sci)'; t.innerText="Mitchell's Science Discovery";
-            } else if(type==='ss'){
-                document.getElementById('ssGrid').classList.add('active-grid');
-                document.getElementById('ssBtn').className='tab-btn active active-ss';
-                h.style.background='var(--ss)'; t.innerText="Mitchell's Social Studies";
-            }
-            updateUI();
-        }
-        function updateUI() {
-            const all = document.querySelectorAll('.ged-check').length;
-            const checked = document.querySelectorAll('.ged-check:checked').length;
-            document.getElementById('progress-bar').style.width = (checked/all*100) + "%";
-            document.getElementById('done-count').textContent = checked;
-        }
-        function save() {
-            const d = {}; document.querySelectorAll('.ged-check').forEach(c => d[c.id] = c.checked);
-            fetch(FIREBASE_URL + CLOUD_FILE, { method: 'PUT', body: JSON.stringify(d) });
-            updateUI();
-        }
-        function load() {
-            fetch(FIREBASE_URL + CLOUD_FILE).then(r => r.json()).then(data => {
-                if (data) Object.entries(data).forEach(([id, val]) => {
-                    const el = document.getElementById(id); if (el) el.checked = val;
-                });
-                updateUI();
+<div class="status-header">
+    <h2 id="display-title" style="margin:0 0 5px 0; color: #333;">Mitchell's GED Progress</h2>
+    <div class="progress-outer"><div id="p-bar" class="bar"></div></div>
+    <div id="stat-text">0% Complete</div>
+</div>
+
+<div class="button-grid">
+    <button class="sub-btn btn-math active" onclick="switchSubject('math')">MATH</button>
+    <button class="sub-btn btn-rla" onclick="switchSubject('rla')">RLA</button>
+    <button class="sub-btn btn-sci" onclick="switchSubject('sci')">SCIENCE</button>
+    <button class="sub-btn btn-ss" onclick="switchSubject('ss')">SOCIAL S.</button>
+</div>
+
+<div class="container">
+    <div id="math-list" class="content active"></div>
+    <div id="rla-list" class="content"></div>
+    <div id="sci-list" class="content"></div>
+    <div id="ss-list" class="content"></div>
+</div>
+
+<script>
+    const dataSet = {
+        math: [
+            "Lesson 1: Whole Numbers", "Lesson 2: Fractions: Adding & Subtracting", "Lesson 3: Decimals", 
+            "Lesson 4: Multiplication", "Lesson 5: Division", "Lesson 6: Factors and Multiples", 
+            "Lesson 7: Using Denominators and Converting Fractions", "Lesson 8: Like and Unlike Terms", 
+            "Lesson 9: Order of Operations", "Lesson 10: Factoring and Solving Equations", "Lesson 11: Absolute Value", 
+            "Lesson 12: Multiplying and Dividing Fractions", "Lesson 13: Exponents", "Lesson 14: Exponent Rules", 
+            "Lesson 15: Squares & Square Roots", "Lesson 16: Cubes, Cube Roots, and Volume", "Lesson 17: Functions and Slopes", 
+            "Lesson 18: Rates and Unit Rates", "Lesson 19: Proportions and Ratios", "Lesson 20: Review Multi–step Word Problems and Inequalities", 
+            "Lesson 21: Math Test Prep", "Lesson 22: Congratulations"
+        ],
+        rla: [
+            "Lesson 1: Vocabulary Questions", "Lesson 2: Analyzing Text", "Lesson 3: Identifying Themes & Main Ideas", 
+            "Lesson 4: Parts Of The Text", "Lesson 5: Expressing/Influencing Opinions", "Lesson 6: Sequence/Cause & Effect", 
+            "Lesson 7: Evidence and Explanation", "Lesson 8: Verb Tenses", "Lesson 9: Run-ons & Fragments", 
+            "Lesson 10: Capitalization", "Lesson 11: Punctuation", "Lesson 12: Getting Ready to Write", 
+            "Lesson 13: Writing the Parts of an Essay", "Lesson 14: Transition Words", 
+            "Lesson 15: Points of View", "Lesson 16: Final Practice Quiz", "Lesson 17: Congratulations!"
+        ],
+        sci: [
+            "Lesson 1: Scientific Method", "Lesson 2: Using Data", "Lesson 3: Using Statistics", 
+            "Lesson 4: Understanding Cells", "Lesson 5: Human Biology", "Lesson 6: DNA & Heredity", 
+            "Lesson 7: Evolution", "Lesson 8: Ecology", "Lesson 9: Ecosystems", "Lesson 10: Geology", 
+            "Lesson 11: Earth’s Atmosphere", "Lesson 12: Earth in Solar System", "Lesson 13: Atoms & Molecules", 
+            "Lesson 14: Changes & Reactions", "Lesson 15: Symbols & Equations", "Lesson 16: Motion & Forces", 
+            "Lesson 17: Energy & Work", "Lesson 18: Units & Formulas", "Lesson 19: Final Science Practice", 
+            "Lesson 20: Congratulations"
+        ],
+        ss: [
+            "Lesson 1: Reading Charts & Graphs", "Lesson 2: Early American History", "Lesson 3: American Revolution", 
+            "Lesson 4: Civil War", "Lesson 5: Progressive Era & WW1", "Lesson 6: Great Depression & WW2", 
+            "Lesson 7: Civil Rights Movement", "Lesson 8: Cold War & Modern World", "Lesson 9: Ancient Civilizations", 
+            "Lesson 10: Human Migration", "Lesson 11: National Borders", "Lesson 12: People & Environment", 
+            "Lesson 13: US Government", "Lesson 14: Citizenship", "Lesson 15: Types of Government", 
+            "Lesson 16: Political Parties", "Lesson 17: Economic Revolutions", "Lesson 18: Taxes", 
+            "Lesson 19: Final Test Prep", "Lesson 20: Congratulations"
+        ]
+    };
+
+    let activeSub = 'math';
+
+    function init() {
+        Object.keys(dataSet).forEach(sub => {
+            const list = document.getElementById(sub + '-list');
+            const saved = JSON.parse(localStorage.getItem('mitch_btn_' + sub)) || {};
+            
+            dataSet[sub].forEach((text, i) => {
+                const id = `mitch_${sub}_${i}`;
+                const card = document.createElement('div');
+                card.className = 'lesson-card';
+                card.onclick = () => toggle(id);
+                card.innerHTML = `
+                    <input type="checkbox" id="${id}" ${saved[id] ? 'checked' : ''}>
+                    <span>${text}</span>
+                `;
+                list.appendChild(card);
             });
-        }
-        setInterval(load, 3000);
-        window.onload = () => { load(); document.querySelectorAll('.ged-check').forEach(c => c.addEventListener('change', save)); };
-    </script>
+        });
+        updateUI();
+    }
+
+    function switchSubject(sub) {
+        activeSub = sub;
+        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+        document.getElementById(sub + '-list').classList.add('active');
+        
+        document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        updateUI();
+    }
+
+    function toggle(id) {
+        const cb = document.getElementById(id);
+        cb.checked = !cb.checked;
+        save();
+    }
+
+    function save() {
+        const data = {};
+        document.querySelectorAll(`#${activeSub}-list input`).forEach(cb => {
+            data[cb.id] = cb.checked;
+        });
+        localStorage.setItem('mitch_btn_' + activeSub, JSON.stringify(data));
+        updateUI();
+    }
+
+    function updateUI() {
+        const currentList = document.getElementById(activeSub + '-list');
+        const total = currentList.querySelectorAll('input').length;
+        const checked = currentList.querySelectorAll('input:checked').length;
+        const pct = Math.round((checked / total) * 100) || 0;
+        
+        document.getElementById('p-bar').style.width = pct + '%';
+        document.getElementById('stat-text').innerText = `${activeSub.toUpperCase()}: ${checked}/${total} Lessons (${pct}%)`;
+    }
+
+    init();
+</script>
+
 </body>
 </html>

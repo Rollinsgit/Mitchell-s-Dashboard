@@ -3,467 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#667eea">
-    <title>Mitchell's GED Dashboard</title>
+    <title>Mitchell's GED Master Hub</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 10px; color: #333; }
-        .container { max-width: 1400px; margin: 0 auto; }
-        .header { background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .header h1 { color: #667eea; margin-bottom: 5px; font-size: 1.5rem; }
-        .header p { font-size: 0.85rem; color: #666; }
-        .sync-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; margin-top: 10px; font-weight: 600; background: #e74c3c; color: white; }
-        .sync-badge.online { background: #27ae60; }
-        .tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .tab-btn { background: white; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; color: #666; border: none; font-size: 0.95rem; transition: all 0.2s; }
-        .tab-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .tab-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .content { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; }
-        .content.active { display: block; }
-        .content h2 { font-size: 1.3rem; margin-bottom: 15px; color: #667eea; }
-        .section { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #667eea; }
-        .section h3 { color: #667eea; margin-bottom: 10px; font-size: 1.1rem; }
-        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 15px -20px; }
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; min-width: 600px; }
-        th { background: #667eea; color: white; padding: 12px; text-align: left; font-weight: 600; }
-        td { padding: 12px; border-bottom: 1px solid #ddd; }
-        tr:nth-child(even) { background: #f8f9fa; }
-        input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: #667eea; }
-        .btn { background: #667eea; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin: 10px 10px 10px 0; font-size: 0.95rem; }
-        .btn:hover { background: #764ba2; }
-        .btn-danger { background: #e74c3c; }
-        .btn-danger:hover { background: #c0392b; }
-        input[type="text"], textarea, select { padding: 12px; font-size: 1rem; border-radius: 5px; border: 2px solid #667eea; margin: 10px 0; width: 100%; font-family: inherit; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
-        .modal.show { display: flex; }
-        .modal-content { background: white; padding: 30px; border-radius: 10px; max-width: 400px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .modal-btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; margin: 10px; font-weight: 600; font-size: 0.95rem; }
-        .modal-btn-confirm { background: #e74c3c; color: white; }
-        .modal-btn-cancel { background: #95a5a6; color: white; }
-        .item-card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
-        .item-info h4 { color: #667eea; margin-bottom: 5px; }
-        .item-info p { font-size: 0.85rem; color: #999; }
-        .btn-delete { background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: 600; }
-        .vocab-item { background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #667eea; }
-        @media (min-width: 768px) {
-            body { padding: 20px; }
-            .header { padding: 30px; }
-            .content { padding: 30px; }
-        }
+        :root { --math: #667eea; --rla: #ff5e62; --sci: #27ae60; --ss: #f39c12; --bg: #f4f7f6; --success: #2ecc71; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
+        body { background: var(--bg); color: #333; padding-bottom: 60px; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+        .hero { background: var(--math); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin-bottom: 30px; transition: 0.5s; }
+        .progress-container { margin: 20px auto 0; background: rgba(255,255,255,0.2); border-radius: 20px; height: 14px; overflow: hidden; max-width: 600px; }
+        #progress-bar { background: #fff; width: 0%; height: 100%; transition: width 0.5s; opacity: 0.9; }
+        .tabs { display: flex; overflow-x: auto; gap: 8px; margin-top: -25px; margin-bottom: 20px; padding: 5px; scrollbar-width: none; justify-content: center; }
+        .tab-btn { padding: 10px 18px; border: none; border-radius: 12px; background: white; font-weight: bold; color: #888; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); white-space: nowrap; font-size: 0.8rem; }
+        .tab-btn.active { color: white; }
+        .active-math { background: var(--math) !important; }
+        .active-rla { background: var(--rla) !important; }
+        .active-sci { background: var(--sci) !important; }
+        .active-ss { background: var(--ss) !important; }
+        .module-grid { display: none; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 768px) { .module-grid { grid-template-columns: 1fr 1fr; } }
+        .active-grid { display: grid; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); height: fit-content; }
+        .module-title { font-size: 1.1rem; margin-bottom: 15px; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
+        .lesson-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f9f9f9; }
+        .lesson-info h4 { font-size: 0.85rem; font-weight: 600; }
+        input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: var(--success); }
     </style>
 </head>
 <body>
+    <div class="hero" id="header">
+        <div class="container">
+            <h1 id="mainTitle">Mitchell's Math Mission</h1>
+            <div class="progress-container"><div id="progress-bar"></div></div>
+            <p style="font-size: 0.9rem; margin-top: 10px;"><span id="done-count">0</span> Lessons Complete</p>
+        </div>
+    </div>
+    <div class="tabs">
+        <button class="tab-btn active active-math" id="mathBtn" onclick="switchSubject('math')">MATH</button>
+        <button class="tab-btn" id="rlaBtn" onclick="switchSubject('rla')">RLA</button>
+        <button class="tab-btn" id="sciBtn" onclick="switchSubject('sci')">SCIENCE</button>
+        <button class="tab-btn" id="ssBtn" onclick="switchSubject('ss')">SOC STUDIES</button>
+    </div>
     <div class="container">
-        <div class="header">
-            <h1>📚 Mitchell's GED Dashboard</h1>
-            <p>Age 15 | GED Preparation Program</p>
-            <div class="sync-badge" id="syncBadge">Connecting...</div>
-        </div>
-        
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('schedule', this)">📅 Schedule</button>
-            <button class="tab-btn" onclick="switchTab('curriculum', this)">📖 Curriculum</button>
-            <button class="tab-btn" onclick="switchTab('reading', this)">📚 Reading</button>
-            <button class="tab-btn" onclick="switchTab('scouts', this)">⚜️ Scouts</button>
-            <button class="tab-btn" onclick="switchTab('manage', this)">⚙️ Manage</button>
-        </div>
-        
-        <!-- SCHEDULE TAB -->
-        <div id="schedule" class="content active">
-            <h2>Daily Schedule & Progress</h2>
-            <p style="color: #666; margin-bottom: 15px;"><strong>9:30 AM – 3:45 PM</strong> (6.25 hours including lunch)</p>
-            <button class="btn btn-danger" onclick="openResetModal()">🔄 Reset Week</button>
-            
-            <div class="section">
-                <h3>Monthly Rotation (Sept 2025 - June 2026)</h3>
-                <div class="table-wrapper">
-                <table>
-                    <tr><th>Month</th><th>Morning Subject (9:30–11:40 AM)</th><th>Afternoon Subject (12:10–3:00 PM)</th><th>Key Milestones</th></tr>
-                    <tr><td>Nov 2025</td><td>Math (Pre-GED basics)</td><td>Language Arts + Typing Club</td><td>Complete 4–6 math lessons (70% mastery)</td></tr>
-                    <tr><td>Dec 2025</td><td>Math (Decimals/Algebra intro)</td><td>Language Arts + Typing Club</td><td>Full practice test end-month</td></tr>
-                    <tr><td>Jan 2026</td><td>Science (Life/Physical basics)</td><td>Language Arts + Typing Club</td><td>Switch to GED-style quizzes</td></tr>
-                    <tr><td>Feb 2026</td><td>Science (Earth/Space)</td><td>Social Studies + Typing Club</td><td>Monthly practice test</td></tr>
-                    <tr><td>Mar 2026</td><td>Math (GED-level Algebra/Geometry)</td><td>Mixed Review + Typing Club</td><td>Weekly timed practices</td></tr>
-                    <tr><td>Apr 2026</td><td>Math (Advanced problem-solving)</td><td>Mixed Review + Typing Club</td><td>Schedule first GED if ready</td></tr>
-                    <tr><td>May-Jun 2026</td><td>GED Testing/Flex Review</td><td>GED Testing/Flex Review</td><td>Take 1–2 subjects/month</td></tr>
-                </table>
-                </div>
+        <div id="mathGrid" class="module-grid active-grid">
+            <div class="card">
+                <h3 class="module-title" style="color:var(--math)">1. Number Sense</h3>
+                <div class="lesson-row"><h4>Place Value</h4><input type="checkbox" id="m1" class="ged-check"></div>
+                <div class="lesson-row"><h4>Rounding & Estimates</h4><input type="checkbox" id="m2" class="ged-check"></div>
+                <div class="lesson-row"><h4>Fractions +/-</h4><input type="checkbox" id="m3" class="ged-check"></div>
+                <div class="lesson-row"><h4>Fractions x/÷</h4><input type="checkbox" id="m4" class="ged-check"></div>
+                <div class="lesson-row"><h4>Decimals</h4><input type="checkbox" id="m5" class="ged-check"></div>
+                <div class="lesson-row"><h4>Percents</h4><input type="checkbox" id="m6" class="ged-check"></div>
+                <div class="lesson-row"><h4>Ratios & Proportions</h4><input type="checkbox" id="m7" class="ged-check"></div>
             </div>
-            
-            <div class="section">
-                <h3>Weekday Activities</h3>
-                <div class="table-wrapper">
-                <table>
-                    <tr><th>Time</th><th>Activity</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr>
-                    <tr><td>9:30–11:40</td><td>Morning Subject (Math/Science/Mixed)</td><td><input type="checkbox" id="morning-mon"></td><td><input type="checkbox" id="morning-tue"></td><td><input type="checkbox" id="morning-wed"></td><td><input type="checkbox" id="morning-thu"></td><td><input type="checkbox" id="morning-fri"></td></tr>
-                    <tr><td>11:40 AM–12:10 PM</td><td>Lunch Break</td><td style="text-align: center;">—</td><td style="text-align: center;">—</td><td style="text-align: center;">—</td><td style="text-align: center;">—</td><td style="text-align: center;">—</td></tr>
-                    <tr><td>12:10–3:00</td><td>Afternoon Subject (Language Arts/Social Studies) + Typing Club</td><td><input type="checkbox" id="afternoon-mon"></td><td><input type="checkbox" id="afternoon-tue"></td><td><input type="checkbox" id="afternoon-wed"></td><td><input type="checkbox" id="afternoon-thu"></td><td><input type="checkbox" id="afternoon-fri"></td></tr>
-                    <tr><td>3:00–3:30</td><td>Reading & Vocabulary</td><td><input type="checkbox" id="reading-mon"></td><td><input type="checkbox" id="reading-tue"></td><td><input type="checkbox" id="reading-wed"></td><td><input type="checkbox" id="reading-thu"></td><td><input type="checkbox" id="reading-fri"></td></tr>
-                    <tr><td>3:30–3:50</td><td>Duolingo (Optional)</td><td><input type="checkbox" id="duolingo-mon"></td><td><input type="checkbox" id="duolingo-tue"></td><td><input type="checkbox" id="duolingo-wed"></td><td><input type="checkbox" id="duolingo-thu"></td><td><input type="checkbox" id="duolingo-fri"></td></tr>
-                    <tr><td>3:50–4:00</td><td>Wrap-Up & Plan Next Day</td><td><input type="checkbox" id="wrapup-mon"></td><td><input type="checkbox" id="wrapup-tue"></td><td><input type="checkbox" id="wrapup-wed"></td><td><input type="checkbox" id="wrapup-thu"></td><td><input type="checkbox" id="wrapup-fri"></td></tr>
-                </table>
-                </div>
+            <div class="card">
+                <h3 class="module-title" style="color:var(--math)">2. Geometry & Measurement</h3>
+                <div class="lesson-row"><h4>Perimeter & Area</h4><input type="checkbox" id="m8" class="ged-check"></div>
+                <div class="lesson-row"><h4>Circles (Area/Circ)</h4><input type="checkbox" id="m9" class="ged-check"></div>
+                <div class="lesson-row"><h4>Pythagorean Theorem</h4><input type="checkbox" id="m10" class="ged-check"></div>
+                <div class="lesson-row"><h4>Volume</h4><input type="checkbox" id="m11" class="ged-check"></div>
+                <div class="lesson-row"><h4>Surface Area</h4><input type="checkbox" id="m12" class="ged-check"></div>
+            </div>
+            <div class="card">
+                <h3 class="module-title" style="color:var(--math)">3. Algebra</h3>
+                <div class="lesson-row"><h4>Variables & Expressions</h4><input type="checkbox" id="m13" class="ged-check"></div>
+                <div class="lesson-row"><h4>Solving 1-Step Eq.</h4><input type="checkbox" id="m14" class="ged-check"></div>
+                <div class="lesson-row"><h4>Multi-Step Equations</h4><input type="checkbox" id="m15" class="ged-check"></div>
+                <div class="lesson-row"><h4>Inequalities</h4><input type="checkbox" id="m16" class="ged-check"></div>
+                <div class="lesson-row"><h4>Polynomials</h4><input type="checkbox" id="m17" class="ged-check"></div>
+                <div class="lesson-row"><h4>Factoring</h4><input type="checkbox" id="m18" class="ged-check"></div>
+            </div>
+            <div class="card">
+                <h3 class="module-title" style="color:var(--math)">4. Graphs & Functions</h3>
+                <div class="lesson-row"><h4>Coordinate Plane</h4><input type="checkbox" id="m19" class="ged-check"></div>
+                <div class="lesson-row"><h4>Slope of a Line</h4><input type="checkbox" id="m20" class="ged-check"></div>
+                <div class="lesson-row"><h4>Equation of a Line</h4><input type="checkbox" id="m21" class="ged-check"></div>
+                <div class="lesson-row"><h4>Functions</h4><input type="checkbox" id="m22" class="ged-check"></div>
+                <div class="lesson-row"><h4>Data, Stats, Probability</h4><input type="checkbox" id="m23" class="ged-check"></div>
+                <div class="lesson-row"><h4>Mean, Median, Mode</h4><input type="checkbox" id="m24" class="ged-check"></div>
             </div>
         </div>
-        
-        <!-- CURRICULUM TAB -->
-        <div id="curriculum" class="content">
-            <h2>Curriculum Overview</h2>
-            <p style="color: #666; margin-bottom: 20px;"><strong>GED Preparation Program (Sept 2025 – June 2026)</strong></p>
-            
-            <div class="section">
-                <h3>📚 Program Structure</h3>
-                <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li><strong>Duration:</strong> 9 months (September 2025 – June 2026)</li>
-                    <li><strong>Schedule:</strong> 9:30 AM – 3:50 PM, Monday–Friday</li>
-                    <li><strong>Lunch Break:</strong> 11:40 AM – 12:10 PM</li>
-                    <li><strong>Goal:</strong> Complete GED by summer 2026</li>
-                </ul>
+        <div id="rlaGrid" class="module-grid">
+            <div class="card">
+                <h3 class="module-title" style="color:var(--rla)">1. Reading Comprehension</h3>
+                <div class="lesson-row"><h4>Main Idea & Details</h4><input type="checkbox" id="r1" class="ged-check"></div>
+                <div class="lesson-row"><h4>Context Clues</h4><input type="checkbox" id="r2" class="ged-check"></div>
+                <div class="lesson-row"><h4>Inferences & Conclusions</h4><input type="checkbox" id="r3" class="ged-check"></div>
+                <div class="lesson-row"><h4>Author's Purpose</h4><input type="checkbox" id="r4" class="ged-check"></div>
+                <div class="lesson-row"><h4>Tone & Mood</h4><input type="checkbox" id="r5" class="ged-check"></div>
+                <div class="lesson-row"><h4>Comparing Texts</h4><input type="checkbox" id="r6" class="ged-check"></div>
+                <div class="lesson-row"><h4>Evidence-Based Reading</h4><input type="checkbox" id="r7" class="ged-check"></div>
             </div>
-
-            <div class="section">
-                <h3>📐 Math Rotation</h3>
-                <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li><strong>Nov 2025:</strong> Pre-GED basics (4–6 lessons, 70% mastery target)</li>
-                    <li><strong>Dec 2025:</strong> Decimals & Algebra intro (Full practice test end-month)</li>
-                    <li><strong>Mar 2026:</strong> GED-level Algebra & Geometry (Weekly timed practices)</li>
-                    <li><strong>Apr 2026:</strong> Advanced problem-solving (Ready for GED test)</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h3>🔬 Science Rotation</h3>
-                <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li><strong>Jan 2026:</strong> Life & Physical basics (Switch to GED-style quizzes)</li>
-                    <li><strong>Feb 2026:</strong> Earth & Space (Monthly practice test)</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h3>📝 Language Arts & Social Studies</h3>
-                <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li><strong>Language Arts:</strong> Ongoing (Nov 2025 – June 2026)</li>
-                    <li><strong>Social Studies:</strong> Introduced in Feb 2026</li>
-                    <li><strong>Typing Club:</strong> Daily integrated practice</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h3>📖 Reading & Vocabulary (3:00–3:30 PM)</h3>
-                <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>Daily reading from current book</li>
-                    <li>GED-style vocabulary building</li>
-                    <li>Comprehension practice</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h3>🌍 Duolingo (3:30–3:50 PM, Optional)</h3>
-                <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>15 minutes daily (Spanish)</li>
-                    <li>Optional/flex time if needed for GED prep</li>
-                </ul>
+            <div class="card">
+                <h3 class="module-title" style="color:var(--rla)">2. Writing & Grammar</h3>
+                <div class="lesson-row"><h4>Sentence Structure</h4><input type="checkbox" id="r8" class="ged-check"></div>
+                <div class="lesson-row"><h4>Punctuation & Capitalization</h4><input type="checkbox" id="r9" class="ged-check"></div>
+                <div class="lesson-row"><h4>Grammar Usage</h4><input type="checkbox" id="r10" class="ged-check"></div>
+                <div class="lesson-row"><h4>The Extended Response</h4><input type="checkbox" id="r11" class="ged-check"></div>
+                <div class="lesson-row"><h4>Drafting the Essay</h4><input type="checkbox" id="r12" class="ged-check"></div>
+                <div class="lesson-row"><h4>Revising & Editing</h4><input type="checkbox" id="r13" class="ged-check"></div>
             </div>
         </div>
-        
-        <!-- READING TAB -->
-        <div id="reading" class="content">
-            <h2>Reading & Vocabulary</h2>
-            <div class="section">
-                <h3>Select Current Book</h3>
-                <select id="bookSelect" onchange="displayVocab()"></select>
+        <div id="sciGrid" class="module-grid">
+            <div class="card">
+                <h3 class="module-title" style="color:var(--sci)">1. Life Science</h3>
+                <div class="lesson-row"><h4>Cell Structures</h4><input type="checkbox" id="s1" class="ged-check"></div>
+                <div class="lesson-row"><h4>Cell Functions</h4><input type="checkbox" id="s2" class="ged-check"></div>
+                <div class="lesson-row"><h4>Genetics & Heredity</h4><input type="checkbox" id="s3" class="ged-check"></div>
+                <div class="lesson-row"><h4>DNA & RNA</h4><input type="checkbox" id="s4" class="ged-check"></div>
+                <div class="lesson-row"><h4>Punnett Squares</h4><input type="checkbox" id="s5" class="ged-check"></div>
+                <div class="lesson-row"><h4>Evolution & Natural Selection</h4><input type="checkbox" id="s6" class="ged-check"></div>
+                <div class="lesson-row"><h4>Human Body Systems</h4><input type="checkbox" id="s7" class="ged-check"></div>
+                <div class="lesson-row"><h4>Ecosystems & Energy Flow</h4><input type="checkbox" id="s8" class="ged-check"></div>
             </div>
-            <div id="vocabDisplay"></div>
+            <div class="card">
+                <h3 class="module-title" style="color:var(--sci)">2. Physical & Earth Science</h3>
+                <div class="lesson-row"><h4>Atomic Structure</h4><input type="checkbox" id="s9" class="ged-check"></div>
+                <div class="lesson-row"><h4>Chemical Reactions</h4><input type="checkbox" id="s10" class="ged-check"></div>
+                <div class="lesson-row"><h4>Force, Motion, Energy</h4><input type="checkbox" id="s11" class="ged-check"></div>
+                <div class="lesson-row"><h4>Earth's Systems</h4><input type="checkbox" id="s12" class="ged-check"></div>
+                <div class="lesson-row"><h4>Space & The Universe</h4><input type="checkbox" id="s13" class="ged-check"></div>
+                <div class="lesson-row"><h4>Scientific Method</h4><input type="checkbox" id="s14" class="ged-check"></div>
+                <div class="lesson-row"><h4>Experimental Design</h4><input type="checkbox" id="s15" class="ged-check"></div>
+                <div class="lesson-row"><h4>Interpreting Data</h4><input type="checkbox" id="s16" class="ged-check"></div>
+            </div>
         </div>
-        
-        <!-- SCOUTS TAB -->
-        <div id="scouts" class="content">
-            <h2>Merit Badges</h2>
-            <div class="section">
-                <h3>Select Merit Badge</h3>
-                <select id="badgeSelect" onchange="displayBadge()"></select>
+        <div id="ssGrid" class="module-grid">
+            <div class="card">
+                <h3 class="module-title" style="color:var(--ss)">1. Civics & Government</h3>
+                <div class="lesson-row"><h4>Types of Government</h4><input type="checkbox" id="ss1" class="ged-check"></div>
+                <div class="lesson-row"><h4>Historical Documents</h4><input type="checkbox" id="ss2" class="ged-check"></div>
+                <div class="lesson-row"><h4>The Constitution</h4><input type="checkbox" id="ss3" class="ged-check"></div>
+                <div class="lesson-row"><h4>Bill of Rights</h4><input type="checkbox" id="ss4" class="ged-check"></div>
+                <div class="lesson-row"><h4>The Three Branches</h4><input type="checkbox" id="ss5" class="ged-check"></div>
+                <div class="lesson-row"><h4>Elections & Political Parties</h4><input type="checkbox" id="ss6" class="ged-check"></div>
+                <div class="lesson-row"><h4>Citizenship & Rights</h4><input type="checkbox" id="ss7" class="ged-check"></div>
             </div>
-            <div id="badgeDisplay"></div>
-        </div>
-        
-        <!-- MANAGE TAB -->
-        <div id="manage" class="content">
-            <h2>Manage Books & Badges</h2>
-            
-            <div class="section">
-                <h3>Add New Book</h3>
-                <input type="text" id="bookNameInput" placeholder="Book Title">
-                <textarea id="bookVocabInput" placeholder="Word|Definition|Part&#10;Example: Courage|Bravery|noun" rows="5"></textarea>
-                <button class="btn" onclick="addNewBook()">Add Book</button>
-                <div id="booksList" style="margin-top: 20px;"></div>
-            </div>
-            
-            <div class="section">
-                <h3>Add New Badge</h3>
-                <input type="text" id="badgeNameInput" placeholder="Badge Name">
-                <textarea id="badgeReqsInput" placeholder="Requirement (one per line)" rows="4"></textarea>
-                <button class="btn" onclick="addNewBadge()">Add Badge</button>
-                <div id="badgesList" style="margin-top: 20px;"></div>
+            <div class="card">
+                <h3 class="module-title" style="color:var(--ss)">2. History & Economics</h3>
+                <div class="lesson-row"><h4>US History: 1776-1877</h4><input type="checkbox" id="ss8" class="ged-check"></div>
+                <div class="lesson-row"><h4>US History: 1877-Present</h4><input type="checkbox" id="ss9" class="ged-check"></div>
+                <div class="lesson-row"><h4>World Wars</h4><input type="checkbox" id="ss10" class="ged-check"></div>
+                <div class="lesson-row"><h4>Cold War Era</h4><input type="checkbox" id="ss11" class="ged-check"></div>
+                <div class="lesson-row"><h4>Basic Economics</h4><input type="checkbox" id="ss12" class="ged-check"></div>
+                <div class="lesson-row"><h4>Supply & Demand</h4><input type="checkbox" id="ss13" class="ged-check"></div>
+                <div class="lesson-row"><h4>Global Geography</h4><input type="checkbox" id="ss14" class="ged-check"></div>
             </div>
         </div>
     </div>
-    
-    <div id="resetModal" class="modal">
-        <div class="modal-content">
-            <h3>Reset Week?</h3>
-            <p>This will clear all checkboxes and sync across devices.</p>
-            <button class="modal-btn modal-btn-cancel" onclick="closeResetModal()">Cancel</button>
-            <button class="modal-btn modal-btn-confirm" onclick="doReset()">Reset</button>
-        </div>
-    </div>
-
     <script>
-        // Firebase Realtime Database URL
+        // CRITICAL: Pointing to Mitchell's specific cloud file
         const FIREBASE_URL = 'https://schooling-dashboard-default-rtdb.firebaseio.com';
-        
-        let books = ["Book 1", "Book 2"];
-        let vocabData = [
-            [{w:"Sample",d:"An example",p:"noun"},{w:"Word",d:"A unit of language",p:"noun"}],
-            [{w:"Test",d:"An examination",p:"noun"},{w:"Study",d:"To learn",p:"verb"}]
-        ];
-        let badges = [
-            ["Badge 1",["Requirement 1","Requirement 2"]],
-            ["Badge 2",["Requirement 1","Requirement 2"]]
-        ];
+        const CLOUD_FILE = '/mitchell_sync.json';
 
-        // UI Functions
-        function switchTab(tabName, btn) {
-            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            btn.classList.add('active');
-            if (tabName === 'manage') updateManageDisplay();
-        }
-
-        function displayVocab() {
-            const idx = document.getElementById('bookSelect').value;
-            let html = '<div class="section"><h3>' + books[idx] + ' Vocabulary</h3>';
-            vocabData[idx].forEach((w, i) => {
-                html += '<div class="vocab-item"><strong>' + (i+1) + '. ' + w.w + '</strong> <em>(' + w.p + ')</em><br>' + w.d + '</div>';
-            });
-            html += '</div>';
-            document.getElementById('vocabDisplay').innerHTML = html;
-        }
-
-        function displayBadge() {
-            const idx = document.getElementById('badgeSelect').value;
-            let html = '<div class="section"><h3>' + badges[idx][0] + '</h3><ul style="margin-left:20px;">';
-            badges[idx][1].forEach(r => html += '<li style="margin:8px 0;">' + r + '</li>');
-            html += '</ul></div>';
-            document.getElementById('badgeDisplay').innerHTML = html;
-        }
-
-        function updateSelects() {
-            let html = '';
-            books.forEach((b, i) => html += '<option value="' + i + '">' + b + '</option>');
-            document.getElementById('bookSelect').innerHTML = html;
-            displayVocab();
-
-            html = '';
-            badges.forEach((b, i) => html += '<option value="' + i + '">' + b[0] + '</option>');
-            document.getElementById('badgeSelect').innerHTML = html;
-            displayBadge();
-        }
-
-        function addNewBook() {
-            const name = document.getElementById('bookNameInput').value.trim();
-            const text = document.getElementById('bookVocabInput').value.trim();
-            if (!name || !text) return alert('Enter book name and vocabulary');
-            const words = [];
-            text.split('\n').forEach(line => {
-                const parts = line.split('|').map(x => x.trim());
-                if (parts.length === 3) words.push({w:parts[0],d:parts[1],p:parts[2]});
-            });
-            if (words.length < 2) return alert('Add at least 2 vocabulary words');
-            books.push(name);
-            vocabData.push(words);
-            saveToFirebase();
-            document.getElementById('bookNameInput').value = '';
-            document.getElementById('bookVocabInput').value = '';
-            updateSelects();
-            updateManageDisplay();
-            alert('Added ' + name);
-        }
-
-        function deleteBook(idx) {
-            if (books.length <= 1) return alert('Keep at least one book');
-            if (confirm('Delete ' + books[idx] + '?')) {
-                books.splice(idx, 1);
-                vocabData.splice(idx, 1);
-                saveToFirebase();
-                updateSelects();
-                updateManageDisplay();
+        function switchSubject(type) {
+            document.querySelectorAll('.module-grid').forEach(g => g.classList.remove('active-grid'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.className = 'tab-btn');
+            const h = document.getElementById('header');
+            const t = document.getElementById('mainTitle');
+            if(type==='math'){
+                document.getElementById('mathGrid').classList.add('active-grid');
+                document.getElementById('mathBtn').className='tab-btn active active-math';
+                h.style.background='var(--math)'; t.innerText="Mitchell's Math Mission";
+            } else if(type==='rla'){
+                document.getElementById('rlaGrid').classList.add('active-grid');
+                document.getElementById('rlaBtn').className='tab-btn active active-rla';
+                h.style.background='var(--rla)'; t.innerText="Mitchell's RLA Mastery";
+            } else if(type==='sci'){
+                document.getElementById('sciGrid').classList.add('active-grid');
+                document.getElementById('sciBtn').className='tab-btn active active-sci';
+                h.style.background='var(--sci)'; t.innerText="Mitchell's Science Discovery";
+            } else if(type==='ss'){
+                document.getElementById('ssGrid').classList.add('active-grid');
+                document.getElementById('ssBtn').className='tab-btn active active-ss';
+                h.style.background='var(--ss)'; t.innerText="Mitchell's Social Studies";
             }
+            updateUI();
         }
-
-        function addNewBadge() {
-            const name = document.getElementById('badgeNameInput').value.trim();
-            const text = document.getElementById('badgeReqsInput').value.trim();
-            if (!name || !text) return alert('Enter badge name and requirements');
-            const reqs = text.split('\n').filter(l => l.trim());
-            if (reqs.length < 1) return alert('Add at least 1 requirement');
-            badges.push([name, reqs]);
-            saveToFirebase();
-            document.getElementById('badgeNameInput').value = '';
-            document.getElementById('badgeReqsInput').value = '';
-            updateSelects();
-            updateManageDisplay();
-            alert('Added ' + name);
+        function updateUI() {
+            const all = document.querySelectorAll('.ged-check').length;
+            const checked = document.querySelectorAll('.ged-check:checked').length;
+            document.getElementById('progress-bar').style.width = (checked/all*100) + "%";
+            document.getElementById('done-count').textContent = checked;
         }
-
-        function deleteBadge(idx) {
-            if (badges.length <= 1) return alert('Keep at least one badge');
-            if (confirm('Delete ' + badges[idx][0] + '?')) {
-                badges.splice(idx, 1);
-                saveToFirebase();
-                updateSelects();
-                updateManageDisplay();
-            }
+        function save() {
+            const d = {}; document.querySelectorAll('.ged-check').forEach(c => d[c.id] = c.checked);
+            fetch(FIREBASE_URL + CLOUD_FILE, { method: 'PUT', body: JSON.stringify(d) });
+            updateUI();
         }
-
-        function updateManageDisplay() {
-            let html = '';
-            books.forEach((b, i) => {
-                html += '<div class="item-card"><div class="item-info"><h4>' + b + '</h4><p>' + vocabData[i].length + ' words</p></div><button class="btn-delete" onclick="deleteBook(' + i + ')">Delete</button></div>';
-            });
-            document.getElementById('booksList').innerHTML = html;
-
-            html = '';
-            badges.forEach((b, i) => {
-                html += '<div class="item-card"><div class="item-info"><h4>' + b[0] + '</h4><p>' + b[1].length + ' requirements</p></div><button class="btn-delete" onclick="deleteBadge(' + i + ')">Delete</button></div>';
-            });
-            document.getElementById('badgesList').innerHTML = html;
-        }
-
-        function openResetModal() {
-            document.getElementById('resetModal').classList.add('show');
-        }
-
-        function closeResetModal() {
-            document.getElementById('resetModal').classList.remove('show');
-        }
-
-        function doReset() {
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-            saveCheckboxes();
-            closeResetModal();
-        }
-
-        // Firebase Functions
-        function saveCheckboxes() {
-            const data = {};
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                data[cb.id] = cb.checked;
-            });
-            fetch(FIREBASE_URL + '/checks.json', {
-                method: 'PUT',
-                body: JSON.stringify(data),
-                headers: { 'Content-Type': 'application/json' }
-            })
-            .then(r => {
-                if (!r.ok) throw new Error('Save failed');
-                console.log('Checkboxes saved');
-            })
-            .catch(e => console.error('Checkbox save error:', e));
-        }
-
-        function loadCheckboxes() {
-            fetch(FIREBASE_URL + '/checks.json')
-                .then(r => {
-                    if (!r.ok) throw new Error('Load failed');
-                    return r.json();
-                })
-                .then(data => {
-                    if (data) {
-                        Object.entries(data).forEach(([id, checked]) => {
-                            const el = document.getElementById(id);
-                            if (el) el.checked = checked;
-                        });
-                    }
-                    console.log('Checkboxes loaded');
-                })
-                .catch(e => console.error('Checkbox load error:', e));
-        }
-
-        function saveToFirebase() {
-            Promise.all([
-                fetch(FIREBASE_URL + '/books.json', { 
-                    method: 'PUT', 
-                    body: JSON.stringify(books),
-                    headers: { 'Content-Type': 'application/json' }
-                }),
-                fetch(FIREBASE_URL + '/vocab.json', { 
-                    method: 'PUT', 
-                    body: JSON.stringify(vocabData),
-                    headers: { 'Content-Type': 'application/json' }
-                }),
-                fetch(FIREBASE_URL + '/badges.json', { 
-                    method: 'PUT', 
-                    body: JSON.stringify(badges),
-                    headers: { 'Content-Type': 'application/json' }
-                })
-            ])
-            .then(() => console.log('Data saved to Firebase'))
-            .catch(e => console.error('Firebase save error:', e));
-        }
-
-        function loadFromFirebase() {
-            Promise.all([
-                fetch(FIREBASE_URL + '/books.json').then(r => r.json()),
-                fetch(FIREBASE_URL + '/vocab.json').then(r => r.json()),
-                fetch(FIREBASE_URL + '/badges.json').then(r => r.json())
-            ])
-            .then(([booksData, vocabData2, badgesData]) => {
-                if (booksData) books = booksData;
-                if (vocabData2) vocabData = vocabData2;
-                if (badgesData) badges = badgesData;
-                updateSelects();
-                console.log('Data loaded from Firebase');
-            })
-            .catch(e => console.error('Firebase load error:', e));
-        }
-
-        function checkConnection() {
-            fetch(FIREBASE_URL + '/.json', { method: 'GET' })
-                .then(r => {
-                    if (r.ok) {
-                        document.getElementById('syncBadge').textContent = '☁️ Cloud Synced';
-                        document.getElementById('syncBadge').classList.add('online');
-                    } else {
-                        throw new Error('Not ok');
-                    }
-                })
-                .catch(() => {
-                    document.getElementById('syncBadge').textContent = '⚠️ Offline';
-                    document.getElementById('syncBadge').classList.remove('online');
+        function load() {
+            fetch(FIREBASE_URL + CLOUD_FILE).then(r => r.json()).then(data => {
+                if (data) Object.entries(data).forEach(([id, val]) => {
+                    const el = document.getElementById(id); if (el) el.checked = val;
                 });
-        }
-
-        // Periodic sync check every 3 seconds
-        setInterval(() => {
-            loadCheckboxes();
-            loadFromFirebase();
-            checkConnection();
-        }, 3000);
-
-        // Initialize
-        window.addEventListener('load', () => {
-            updateSelects();
-            loadFromFirebase();
-            loadCheckboxes();
-            updateManageDisplay();
-            checkConnection();
-
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                cb.addEventListener('change', saveCheckboxes);
+                updateUI();
             });
-        });
+        }
+        setInterval(load, 3000);
+        window.onload = () => { load(); document.querySelectorAll('.ged-check').forEach(c => c.addEventListener('change', save)); };
     </script>
 </body>
 </html>

@@ -3,36 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mitchell's Training Dashboard</title>
+    <title>Mitchell's GED Training</title>
     <style>
-        :root { --math: #4a90e2; --rla: #ff5e62; --sci: #27ae60; --ss: #f39c12; --bg: #f4f7f6; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: sans-serif; background: var(--bg); margin: 0; padding-bottom: 40px; }
-        .status-header { background: #fff; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .progress-outer { background: #eee; border-radius: 10px; height: 14px; margin: 10px auto; max-width: 400px; overflow: hidden; }
+        :root { --math: #e3f2fd; --rla: #ffebee; --sci: #e8f5e9; --ss: #fff3e0; }
+        body { font-family: sans-serif; margin: 0; padding-bottom: 50px; transition: background 0.5s ease; background: var(--math); }
+        .status-header { background: #fff; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .progress-outer { background: #eee; border-radius: 10px; height: 18px; margin: 10px auto; max-width: 400px; overflow: hidden; }
         .bar { background: #2ecc71; height: 100%; width: 0%; transition: 0.5s; }
-        .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 15px; max-width: 600px; margin: 0 auto 20px; }
-        .sub-btn { padding: 15px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; opacity: 0.5; }
-        .sub-btn.active { opacity: 1; transform: scale(1.02); }
-        .btn-math { background: var(--math); } .btn-rla { background: var(--rla); } .btn-sci { background: var(--sci); } .btn-ss { background: var(--ss); }
+        .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; max-width: 600px; margin: 0 auto; }
+        .sub-btn { padding: 15px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        .btn-math { background: #1e88e5; } .btn-rla { background: #e53935; } .btn-sci { background: #43a047; } .btn-ss { background: #fb8c00; }
         .container { max-width: 600px; margin: 0 auto; padding: 0 15px; }
         .content { display: none; } .content.active { display: block; }
-        .lesson-card { background: white; margin-bottom: 10px; padding: 15px; border-radius: 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .lesson-info { display: flex; align-items: center; gap: 15px; flex-grow: 1; cursor: pointer; }
-        .learn-link { background: #eef2f3; border: none; padding: 10px; border-radius: 10px; font-size: 1.2rem; cursor: pointer; }
+        .lesson-card { background: white; margin-bottom: 12px; padding: 20px; border-radius: 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .lesson-info { display: flex; align-items: center; gap: 20px; flex-grow: 1; cursor: pointer; }
+        input[type="checkbox"] { width: 35px; height: 35px; cursor: pointer; accent-color: #2ecc71; }
+        .lesson-card span { font-weight: bold; color: #333; font-size: 1.1rem; }
+        .learn-link { background: #f0f0f0; border: none; padding: 12px; border-radius: 10px; font-size: 1.4rem; cursor: pointer; }
+        #congrats { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5rem; z-index: 999; pointer-events: none; }
     </style>
 </head>
-<body>
+<body id="body-bg">
+<div id="congrats">🎉🏆🔥</div>
 <div class="status-header">
-    <h2>Mitchell's Training Camp</h2>
+    <h2 id="header-title">Mitchell's MATH Training</h2>
     <div class="progress-outer"><div id="p-bar" class="bar"></div></div>
-    <div id="stat-text">0% Complete</div>
+    <div id="stat-text">0/22 Rounds (0%)</div>
 </div>
 <div class="button-grid">
-    <button id="btn-math" class="sub-btn btn-math active" onclick="switchSubject('math')">MATH</button>
-    <button id="btn-rla" class="sub-btn btn-rla" onclick="switchSubject('rla')">RLA</button>
-    <button id="btn-sci" class="sub-btn btn-sci" onclick="switchSubject('sci')">SCIENCE</button>
-    <button id="btn-ss" class="sub-btn btn-ss" onclick="switchSubject('ss')">SOCIAL S.</button>
+    <button class="sub-btn btn-math" onclick="switchSubject('math')">MATH</button>
+    <button class="sub-btn btn-rla" onclick="switchSubject('rla')">RLA</button>
+    <button class="sub-btn btn-sci" onclick="switchSubject('sci')">SCIENCE</button>
+    <button class="sub-btn btn-ss" onclick="switchSubject('ss')">SOCIAL S.</button>
 </div>
 <div class="container">
     <div id="math-list" class="content active"></div>
@@ -51,30 +53,30 @@
     function init() {
         Object.keys(dataSet).forEach(sub => {
             const list = document.getElementById(sub + '-list');
-            const saved = JSON.parse(localStorage.getItem('mitch_train_vfinal_' + sub)) || {};
+            const saved = JSON.parse(localStorage.getItem('mitch_v7_' + sub)) || {};
             dataSet[sub].forEach((text, i) => {
-                const id = `m_fn_${sub}_${i}`;
+                const id = `m_${sub}_${i}`;
                 const card = document.createElement('div');
                 card.className = 'lesson-card';
-                card.innerHTML = `<div class="lesson-info" onclick="toggle('${id}')"><input type="checkbox" id="${id}" ${saved[id] ? 'checked' : ''} onchange="save()"><span>Round ${i+1}: ${text}</span></div><button class="learn-link" onclick="copyAndOpen('GED ${sub.toUpperCase()} ${text}')">📖</button>`;
+                card.innerHTML = `<div class="lesson-info" onclick="toggleCheckbox('${id}')"><input type="checkbox" id="${id}" ${saved[id] ? 'checked' : ''} onclick="event.stopPropagation(); saveProgress();"><span>Round ${i+1}: ${text}</span></div><button class="learn-link" onclick="copyAndOpen('GED ${sub.toUpperCase()} ${text}')">📖</button>`;
                 list.appendChild(card);
             });
         });
         updateUI();
     }
-    function toggle(id) { const cb = document.getElementById(id); if(cb) { cb.checked = !cb.checked; save(); } }
-    function save() {
+    function toggleCheckbox(id) { const cb = document.getElementById(id); cb.checked = !cb.checked; saveProgress(); }
+    function saveProgress() {
         const data = {};
         document.querySelectorAll(`#${activeSub}-list input`).forEach(cb => { data[cb.id] = cb.checked; });
-        localStorage.setItem('mitch_train_vfinal_' + activeSub, JSON.stringify(data));
+        localStorage.setItem('mitch_v7_' + activeSub, JSON.stringify(data));
         updateUI();
     }
     function switchSubject(sub) {
         activeSub = sub;
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
         document.getElementById(sub + '-list').classList.add('active');
-        document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-' + sub).classList.add('active');
+        document.getElementById('body-bg').style.background = `var(--${sub})`;
+        document.getElementById('header-title').innerText = `Mitchell's ${sub.toUpperCase()} Training`;
         updateUI();
     }
     function updateUI() {
@@ -83,7 +85,12 @@
         const checked = currentList.querySelectorAll('input:checked').length;
         const pct = Math.round((checked / total) * 100) || 0;
         document.getElementById('p-bar').style.width = pct + '%';
-        document.getElementById('stat-text').innerText = `${activeSub.toUpperCase()}: ${checked}/${total} (${pct}%)`;
+        document.getElementById('stat-text').innerText = `${checked}/${total} Rounds (${pct}%)`;
+        if (pct === 100) { triggerCongrats(); }
+    }
+    function triggerCongrats() {
+        const c = document.getElementById('congrats'); c.style.display = 'block';
+        setTimeout(() => { c.style.display = 'none'; }, 3000);
     }
     function copyAndOpen(phrase) {
         const el = document.createElement('textarea'); el.value = phrase; document.body.appendChild(el);
